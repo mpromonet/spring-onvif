@@ -1,0 +1,73 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+
+	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
+		<dataFormats>
+			<soapjaxb id="soapReplay"  contextPath="org.onvif.ver10.replay.wsdl" />
+			<soapjaxb id="soapRecording"  contextPath="org.onvif.ver10.recording.wsdl" />
+			<soapjaxb id="soapEvents"  contextPath="org.onvif.ver10.events.wsdl" />
+			<soapjaxb id="soapDevice"  contextPath="org.onvif.ver10.device.wsdl" />
+		</dataFormats>
+		<intercept>
+			<to uri="log:interceptor?showHeaders=true&amp;level=DEBUG" />
+		</intercept>
+
+		<route>
+			<from uri="servlet:///hello" />
+			<setBody>
+				<constant>Hello</constant>
+			</setBody>
+		</route>
+
+		<route>
+			<from uri="cxf:/GetReplayUri?serviceClass=org.onvif.ver10.replay.wsdl.GetReplayUri&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.replay.wsdl.GetReplayUriResponse();
+					response.setUri("http://x.y.y.z/replay");
+					response;
+				</groovy>
+			</setBody>
+			<marshal ref="soapReplay"/>
+		</route>
+
+		<route>
+			<from uri="cxf:/GetServiceCapabilities?serviceClass=org.onvif.ver10.recording.wsdl.GetServiceCapabilities&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.recording.wsdl.GetServiceCapabilitiesResponse();
+					response;
+				</groovy>
+			</setBody>
+			<marshal ref="soapRecording"/>
+		</route>
+
+		<route>
+			<from uri="cxf:/PullMessages?serviceClass=org.onvif.ver10.events.wsdl.PullMessages&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
+					response;
+				</groovy>
+			</setBody>
+			<marshal ref="soapEvents"/>
+		</route>
+
+		<route>
+			<from uri="cxf:/GetCapabilities?serviceClass=org.onvif.ver10.device.wsdl.GetCapabilities&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					response;
+				</groovy>
+			</setBody>
+			<marshal ref="soapDevice"/>
+		</route>
+
+	</camelContext>
+
+</beans>
