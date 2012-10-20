@@ -169,6 +169,12 @@
 			<marshal ref="org.onvif.ver20.ptz.wsdl"/>
 		</route>
 
+		<!--  discovery -->
+		<route>
+			<from uri="cxf:/discovery?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryService&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<to uri="log:discovery"/>
+		</route>
+
 	</camelContext>
 
 </beans>
