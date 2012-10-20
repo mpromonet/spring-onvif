@@ -6,10 +6,6 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
-		<intercept>
-			<to uri="log:interceptor?showHeaders=true&amp;level=DEBUG" />
-		</intercept>
-
 		<dataFormats>
 			<soapjaxb id="org.onvif.ver10.replay.wsdl"  contextPath="org.onvif.ver10.replay.wsdl" version="1.2"/>
 			<soapjaxb id="org.onvif.ver10.recording.wsdl"  contextPath="org.onvif.ver10.recording.wsdl" version="1.2"/>
@@ -17,6 +13,11 @@
 			<soapjaxb id="org.onvif.ver10.device.wsdl"  contextPath="org.onvif.ver10.device.wsdl" version="1.2"/>
 			<soapjaxb id="org.onvif.ver20.ptz.wsdl"  contextPath="org.onvif.ver20.ptz.wsdl" version="1.2"/>
 		</dataFormats>
+		
+		<!--  log -->
+		<intercept>
+			<to uri="log:interceptor?showHeaders=true&amp;level=DEBUG" />
+		</intercept>
 		
 		<!--  test -->
 		<route>
