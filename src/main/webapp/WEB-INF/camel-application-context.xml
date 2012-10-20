@@ -79,8 +79,7 @@
 				<groovy>
 					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
 					capabilities =  new org.onvif.ver10.device.wsdl.GetCapabilities();
-					capabilitycat = org.onvif.ver10.schema.CapabilityCategory.DEVICE;
-					capabilities.getCategory().add(capabilitycat); 
+					capabilities.getCategory().add(org.onvif.ver10.schema.CapabilityCategory.DEVICE); 
 					response.setCapabilities(capabilities);
 					response;
 				</groovy>
