@@ -73,9 +73,9 @@
 			<setBody>
 				<groovy>
 					message = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType.Message();
-					message.setAny("test");
 
 					notification = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType();
+					notification.setMessage(message);
 
 					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
 					response.getNotificationMessage().add(notification);
