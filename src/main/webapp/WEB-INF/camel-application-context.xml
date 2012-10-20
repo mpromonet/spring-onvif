@@ -5,17 +5,17 @@
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 
-	<bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
+	<!--bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
 		<constructor-arg value="org.onvif.ver10.device.wsdl.Device"/>
 		<constructor-arg value="true"/>
-	</bean>
+	</bean-->
     
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
 		<dataFormats>
 			<soapjaxb id="soapReplay"  contextPath="org.onvif.ver10.replay.wsdl" />
 			<soapjaxb id="soapRecording"  contextPath="org.onvif.ver10.recording.wsdl" />
 			<soapjaxb id="soapEvents"  contextPath="org.onvif.ver10.events.wsdl" />
-			<soapjaxb id="soapDevice"  contextPath="org.onvif.ver10.device.wsdl" elementNameStrategyRef="myNameStrategy"/>
+			<soapjaxb id="soapDevice"  contextPath="org.onvif.ver10.device.wsdl.Device"/>
 		</dataFormats>
 		<intercept>
 			<to uri="log:interceptor?showHeaders=true&amp;level=DEBUG" />
@@ -63,7 +63,7 @@
 		</route>
 
 		<route>
-			<from uri="cxf:/GetCapabilities?serviceClass=org.onvif.ver10.device.wsdl.GetCapabilities&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/GetCapabilities?serviceClass=org.onvif.ver10.device.wsdl.Device&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
