@@ -12,10 +12,11 @@
     
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
 		<dataFormats>
-			<soapjaxb id="soapReplay"  contextPath="org.onvif.ver10.replay.wsdl" />
-			<soapjaxb id="soapRecording"  contextPath="org.onvif.ver10.recording.wsdl" />
-			<soapjaxb id="soapEvents"  contextPath="org.onvif.ver10.events.wsdl" />
-			<soapjaxb id="soapDevice"  contextPath="org.onvif.ver10.device.wsdl"/>
+			<soapjaxb id="org.onvif.ver10.replay.wsdl"  contextPath="org.onvif.ver10.replay.wsdl" />
+			<soapjaxb id="org.onvif.ver10.recording.wsdl"  contextPath="org.onvif.ver10.recording.wsdl" />
+			<soapjaxb id="org.onvif.ver10.events.wsdl"  contextPath="org.onvif.ver10.events.wsdl" />
+			<soapjaxb id="org.onvif.ver10.device.wsdl"  contextPath="org.onvif.ver10.device.wsdl"/>
+			<soapjaxb id="org.onvif.ver20.ptz.wsdl"  contextPath="org.onvif.ver20.ptz.wsdl"/>
 		</dataFormats>
 		<intercept>
 			<to uri="log:interceptor?showHeaders=true&amp;level=DEBUG" />
@@ -29,7 +30,7 @@
 		</route>
 
 		<route>
-			<from uri="cxf:/GetReplayUri?serviceClass=org.onvif.ver10.replay.wsdl.ReplayPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/ReplayPort?serviceClass=org.onvif.ver10.replay.wsdl.ReplayPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.replay.wsdl.GetReplayUriResponse();
@@ -37,40 +38,65 @@
 					response;
 				</groovy>
 			</setBody>
-			<marshal ref="soapReplay"/>
+			<marshal ref="org.onvif.ver10.replay.wsdl"/>
 		</route>
 
 		<route>
-			<from uri="cxf:/GetServiceCapabilities?serviceClass=org.onvif.ver10.recording.wsdl.RecordingPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/RecordingPort?serviceClass=org.onvif.ver10.recording.wsdl.RecordingPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.recording.wsdl.GetServiceCapabilitiesResponse();
 					response;
 				</groovy>
 			</setBody>
-			<marshal ref="soapRecording"/>
+			<marshal ref="org.onvif.ver10.recording.wsdl"/>
 		</route>
 
 		<route>
-			<from uri="cxf:/PullMessages?serviceClass=org.onvif.ver10.events.wsdl.PullPointSubscription&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/PullPointSubscription?serviceClass=org.onvif.ver10.events.wsdl.PullPointSubscription&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
 					response;
 				</groovy>
 			</setBody>
-			<marshal ref="soapEvents"/>
+			<marshal ref="org.onvif.ver10.events.wsdl"/>
 		</route>
-
 		<route>
-			<from uri="cxf:/GetCapabilities?serviceClass=org.onvif.ver10.device.wsdl.Device&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/EventPortType?serviceClass=org.onvif.ver10.events.wsdl.EventPortType&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
-					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
 					response;
 				</groovy>
 			</setBody>
-			<marshal ref="soapDevice"/>
+			<marshal ref="org.onvif.ver10.events.wsdl"/>
+		</route>
+
+		<route>
+			<from uri="cxf:/Device?serviceClass=org.onvif.ver10.device.wsdl.Device&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					capabilities =  new org.onvif.ver10.device.wsdl.GetCapabilities();
+					capabilitycat = new org.onvif.ver10.schema.CapabilityCategory("Device");
+					capabilities.getCategory().add(capabilitycat); 
+					response.setCapabilities(capabilities);
+					response;
+				</groovy>
+			</setBody>
+			<marshal ref="org.onvif.ver10.device.wsdl"/>
+		</route>
+
+		<route>
+			<from uri="cxf:/Device?serviceClass=org.onvif.ver20.ptz.wsdl.PTZ&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver20.ptz.wsdl.GetConfigurationsResponse();
+					response;
+				</groovy>
+			</setBody>
+			<marshal ref="org.onvif.ver20.ptz.wsdl"/>
 		</route>
 
 	</camelContext>
