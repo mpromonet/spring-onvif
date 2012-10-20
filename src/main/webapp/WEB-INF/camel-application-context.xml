@@ -100,8 +100,9 @@
 			<from uri="seda:PullMessages" />
 			<setBody>
 				<groovy>
+					elt = new javax.xml.bind.JAXBElement<String>(new javax.xml.namespace.QName("xmlString"),String.class, "test");
+					
 					message = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType.Message();
-					javax.xml.bind.JAXBElement<String> elt = new javax.xml.bind.JAXBElement<String>(new javax.xml.namespace.QName("http://apache.org/hello_world_soap_http/other", "port"),String.class, "hello");
 					message.setAny(elt);
 
 					notification = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType();
