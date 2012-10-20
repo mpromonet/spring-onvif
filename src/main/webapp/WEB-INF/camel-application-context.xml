@@ -77,9 +77,9 @@
 			<from uri="cxf:/Device?serviceClass=org.onvif.ver10.device.wsdl.Device&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
-					capabilities =  new org.onvif.ver10.device.wsdl.GetCapabilities();
-					capabilities.getCategory().add(org.onvif.ver10.schema.CapabilityCategory.DEVICE); 
-					capabilities.getCategory().add(org.onvif.ver10.schema.CapabilityCategory.EVENTS); 
+					capabilities =  new org.onvif.ver10.schema.Capabilities();
+					capabilities.setDevice(new org.onvif.ver10.schema.DeviceCapabilities());
+					capabilities.setEvents(new org.onvif.ver10.schema.EventCapabilities());
 					
 					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
 					response.setCapabilities(capabilities);
