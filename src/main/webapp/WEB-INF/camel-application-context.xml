@@ -15,7 +15,7 @@
 			<soapjaxb id="soapReplay"  contextPath="org.onvif.ver10.replay.wsdl" />
 			<soapjaxb id="soapRecording"  contextPath="org.onvif.ver10.recording.wsdl" />
 			<soapjaxb id="soapEvents"  contextPath="org.onvif.ver10.events.wsdl" />
-			<soapjaxb id="soapDevice"  contextPath="org.onvif.ver10.device.wsdl.Device"/>
+			<soapjaxb id="soapDevice"  contextPath="org.onvif.ver10.device.wsdl"/>
 		</dataFormats>
 		<intercept>
 			<to uri="log:interceptor?showHeaders=true&amp;level=DEBUG" />
@@ -29,7 +29,7 @@
 		</route>
 
 		<route>
-			<from uri="cxf:/GetReplayUri?serviceClass=org.onvif.ver10.replay.wsdl.GetReplayUri&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/GetReplayUri?serviceClass=org.onvif.ver10.replay.wsdl.ReplayPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.replay.wsdl.GetReplayUriResponse();
@@ -41,7 +41,7 @@
 		</route>
 
 		<route>
-			<from uri="cxf:/GetServiceCapabilities?serviceClass=org.onvif.ver10.recording.wsdl.GetServiceCapabilities&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/GetServiceCapabilities?serviceClass=org.onvif.ver10.recording.wsdl.RecordingPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.recording.wsdl.GetServiceCapabilitiesResponse();
@@ -52,7 +52,7 @@
 		</route>
 
 		<route>
-			<from uri="cxf:/PullMessages?serviceClass=org.onvif.ver10.events.wsdl.PullMessages&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/PullMessages?serviceClass=org.onvif.ver10.events.wsdl.PullPointSubscription&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
