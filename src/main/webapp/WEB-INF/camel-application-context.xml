@@ -5,11 +5,6 @@
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 
-	<!--bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
-		<constructor-arg value="org.onvif.ver10.device.wsdl.Device"/>
-		<constructor-arg value="true"/>
-	</bean-->
-    
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
 		<dataFormats>
 			<soapjaxb id="org.onvif.ver10.replay.wsdl"  contextPath="org.onvif.ver10.replay.wsdl" version="1.2"/>
@@ -75,23 +70,33 @@
 
 		<route>
 			<from uri="cxf:/Device?serviceClass=org.onvif.ver10.device.wsdl.Device&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
-			<setBody>
-				<groovy>
-					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
-					deviceCapability.setXAddr("http://a.b.c.d/device");
-					eventCapability = new org.onvif.ver10.schema.EventCapabilities()
-					eventCapability.setXAddr("http://a.b.c.d/events");
-					
-					capabilities =  new org.onvif.ver10.schema.Capabilities();
-					capabilities.setDevice(deviceCapability);
-					capabilities.setEvents(eventCapability);
-					
-					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
-					response.setCapabilities(capabilities);
-					response;
-				</groovy>
-			</setBody>
-			<marshal ref="org.onvif.ver10.device.wsdl"/>
+			<choice>
+				<when>
+					<simple>header.SOAPAction == "http://www.onvif.org/ver10/device/wsdl/GetCapabilities"</simple>
+					<setBody>
+						<groovy>
+							deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
+							deviceCapability.setXAddr("http://a.b.c.d/device");
+							eventCapability = new org.onvif.ver10.schema.EventCapabilities()
+							eventCapability.setXAddr("http://a.b.c.d/events");
+							
+							capabilities =  new org.onvif.ver10.schema.Capabilities();
+							capabilities.setDevice(deviceCapability);
+							capabilities.setEvents(eventCapability);
+							
+							response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+							response.setCapabilities(capabilities);
+							response;
+						</groovy>
+					</setBody>
+					<marshal ref="org.onvif.ver10.device.wsdl"/>
+				</when>
+				<otherwise>
+					<setFaultBody>
+						<constant>SOAP_FAULT</constant>
+					</setFaultBody>
+				</otherwise>
+			</choice>
 		</route>
 
 		<route>
