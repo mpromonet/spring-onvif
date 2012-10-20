@@ -89,7 +89,7 @@
 		</route>
 
 		<route>
-			<from uri="cxf:/Device?serviceClass=org.onvif.ver20.ptz.wsdl.PTZ&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<from uri="cxf:/PTZ?serviceClass=org.onvif.ver20.ptz.wsdl.PTZ&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver20.ptz.wsdl.GetConfigurationsResponse();
