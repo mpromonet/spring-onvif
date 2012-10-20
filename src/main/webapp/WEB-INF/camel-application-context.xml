@@ -57,19 +57,8 @@
 			<from uri="cxf:/PullPointSubscription?serviceClass=org.onvif.ver10.events.wsdl.PullPointSubscription&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<choice>
 				<when>
-					<simple>${header.SOAPAction} == '"http://www.onvif.org/ver10/events/wsdl/PullMessages"'</simple>
-					<setBody>
-						<groovy>
-							message = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType.Message();
-							message.setAny("test");
-
-							notification = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType();
-
-							response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
-							response.getNotificationMessage().add(notification);
-							response;
-						</groovy>
-					</setBody>
+					<simple>${header.SOAPAction} == '"http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/PullMessagesRequest"'</simple>
+					<to uri="seda:PullMessages"/>
 					<marshal ref="org.onvif.ver10.events.wsdl"/>
 				</when>
 				<otherwise>
@@ -80,11 +69,25 @@
 			</choice>
 		</route>
 		<route>
+			<from uri="seda:PullMessages" />
+			<setBody>
+				<groovy>
+					message = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType.Message();
+					message.setAny("test");
+
+					notification = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType();
+
+					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
+					response.getNotificationMessage().add(notification);
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
 			<from uri="cxf:/EventPortType?serviceClass=org.onvif.ver10.events.wsdl.EventPortType&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setFaultBody>
 				<simple>SOAP_FAULT</simple>
 			</setFaultBody>
-			<marshal ref="org.onvif.ver10.events.wsdl"/>
 		</route>
 
 		<!-- devicemgmt.wsdl -->
@@ -93,22 +96,7 @@
 			<choice>
 				<when>
 					<simple>${header.SOAPAction} == '"http://www.onvif.org/ver10/device/wsdl/GetCapabilities"'</simple>
-					<setBody>
-						<groovy>
-							deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
-							deviceCapability.setXAddr("http://a.b.c.d/device");
-							eventCapability = new org.onvif.ver10.schema.EventCapabilities()
-							eventCapability.setXAddr("http://a.b.c.d/events");
-							
-							capabilities =  new org.onvif.ver10.schema.Capabilities();
-							capabilities.setDevice(deviceCapability);
-							capabilities.setEvents(eventCapability);
-							
-							response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
-							response.setCapabilities(capabilities);
-							response;
-						</groovy>
-					</setBody>
+					<to uri="seda:GetCapabilities"/>
 					<marshal ref="org.onvif.ver10.device.wsdl"/>
 				</when>
 				<otherwise>
@@ -117,6 +105,25 @@
 					</setFaultBody>
 				</otherwise>
 			</choice>
+		</route>
+		<route>
+			<from uri="seda:GetCapabilities" />
+			<setBody>
+				<groovy>
+					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
+					deviceCapability.setXAddr("http://a.b.c.d/device");
+					eventCapability = new org.onvif.ver10.schema.EventCapabilities()
+					eventCapability.setXAddr("http://a.b.c.d/events");
+					
+					capabilities =  new org.onvif.ver10.schema.Capabilities();
+					capabilities.setDevice(deviceCapability);
+					capabilities.setEvents(eventCapability);
+					
+					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					response.setCapabilities(capabilities);
+					response;
+				</groovy>
+			</setBody>
 		</route>
 
 		<!--  ptz.wsdl -->
