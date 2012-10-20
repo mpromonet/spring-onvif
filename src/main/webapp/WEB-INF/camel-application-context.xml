@@ -77,9 +77,14 @@
 			<from uri="cxf:/Device?serviceClass=org.onvif.ver10.device.wsdl.Device&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
 			<setBody>
 				<groovy>
+					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
+					deviceCapability.setXAddr("http://a.b.c.d/device");
+					eventCapability = new org.onvif.ver10.schema.EventCapabilities()
+					eventCapability.setXAddr("http://a.b.c.d/events");
+					
 					capabilities =  new org.onvif.ver10.schema.Capabilities();
-					capabilities.setDevice(new org.onvif.ver10.schema.DeviceCapabilities());
-					capabilities.setEvents(new org.onvif.ver10.schema.EventCapabilities());
+					capabilities.setDevice(deviceCapability);
+					capabilities.setEvents(eventCapability);
 					
 					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
 					response.setCapabilities(capabilities);
