@@ -30,6 +30,21 @@
 		<!--  replay.wsdl -->
 		<route>
 			<from uri="cxf:/ReplayPort?serviceClass=org.onvif.ver10.replay.wsdl.ReplayPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<choice>
+				<when>
+					<simple>${header.SOAPAction} == '"http://www.onvif.org/ver10/replay/wsdl/GetReplayUri"'</simple>
+					<to uri="seda:GetReplayUri"/>
+					<marshal ref="org.onvif.ver10.replay.wsdl"/>
+				</when>
+				<otherwise>
+					<setFaultBody>
+						<simple>SOAP_FAULT</simple>
+					</setFaultBody>
+				</otherwise>
+			</choice>
+		</route>
+		<route>
+			<from uri="seda:GetReplayUri" />			
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.replay.wsdl.GetReplayUriResponse();
@@ -37,19 +52,32 @@
 					response;
 				</groovy>
 			</setBody>
-			<marshal ref="org.onvif.ver10.replay.wsdl"/>
 		</route>
 
 		<!--  recording.wsdl -->
 		<route>
 			<from uri="cxf:/RecordingPort?serviceClass=org.onvif.ver10.recording.wsdl.RecordingPort&amp;loggingFeatureEnabled=true&amp;dataFormat=MESSAGE" />
+			<choice>
+				<when>
+					<simple>${header.SOAPAction} == '"http://www.onvif.org/ver10/recording/wsdl/GetServiceCapabilities"'</simple>
+					<to uri="seda:GetServiceCapabilities"/>
+					<marshal ref="org.onvif.ver10.recording.wsdl"/>
+				</when>
+				<otherwise>
+					<setFaultBody>
+						<simple>SOAP_FAULT</simple>
+					</setFaultBody>
+				</otherwise>
+			</choice>
+		</route>
+		<route>
+			<from uri="seda:GetServiceCapabilities" />			
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.recording.wsdl.GetServiceCapabilitiesResponse();
 					response;
 				</groovy>
 			</setBody>
-			<marshal ref="org.onvif.ver10.recording.wsdl"/>
 		</route>
 
 		<!--  event.wsdl -->
@@ -73,7 +101,8 @@
 			<setBody>
 				<groovy>
 					message = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType.Message();
-					message.setAny(125);
+					javax.xml.bind.JAXBElement<String> elt = new javax.xml.bind.JAXBElement<String>(new javax.xml.namespace.QName("http://apache.org/hello_world_soap_http/other", "port"),String.class, "hello");
+					message.setAny(elt);
 
 					notification = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType();
 					notification.setMessage(message);
