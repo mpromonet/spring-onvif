@@ -11,10 +11,6 @@
 
 		<!-- dependency version -->
 		<camel.version>2.10.2</camel.version>
-		<spring.version>3.0.7.RELEASE</spring.version>
-		<slf4j-version>1.5.8</slf4j-version>
-		<groovy-version>2.0.5</groovy-version>
-		<cxf.version>2.7.0</cxf.version>
 		<!-- plugins version -->
 		<cloudbees-version>1.3.2</cloudbees-version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
@@ -31,12 +27,12 @@
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
+			<version>${cxf-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf.version}</version>
+			<version>${cxf-version}</version>
 		</dependency>
 		 
 		<!-- camel -->
@@ -77,12 +73,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring-version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring-version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -102,7 +98,7 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
+				<version>${cxf-version}</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
