@@ -6,7 +6,7 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 
 	<bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
-		<constructor-arg value="org.onvif.ver10.device.wsdl.GetCapabilities"/>
+		<constructor-arg value="org.onvif.ver10.device.wsdl.Device"/>
 		<constructor-arg value="true"/>
 	</bean>
     
