@@ -39,6 +39,11 @@
 			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>${cxf-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-services-ws-discovery-service</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
 		 
 		<!-- camel -->
 		<dependency>
