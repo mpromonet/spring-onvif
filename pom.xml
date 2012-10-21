@@ -40,7 +40,7 @@
 			<version>${cxf-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.cxf</groupId>
+			<groupId>org.apache.cxf.services.ws-discovery</groupId>
 			<artifactId>cxf-services-ws-discovery-service</artifactId>
 			<version>${cxf-version}</version>
 		</dependency>
