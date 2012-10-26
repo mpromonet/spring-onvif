@@ -9,39 +9,46 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-
-	<cxf:cxfEndpoint id="ReplayPort" address="/ReplayPort" serviceClass="org.onvif.ver10.replay.wsdl.ReplayPort">
-		<cxf:binding> 
-			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
-
-	<cxf:cxfEndpoint id="RecordingPort" address="/RecordingPort" serviceClass="org.onvif.ver10.recording.wsdl.RecordingPort">
-		<cxf:binding> 
-			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
-
-	<cxf:cxfEndpoint id="Device" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
-		<cxf:binding> 
-			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
-
+	
+	<import resource="camel-route-device.xml" />
+	<import resource="camel-route-events.xml" />
+	<import resource="camel-route-recording.xml" />
+	<import resource="camel-route-replay.xml" />
+	<import resource="camel-route-ptz.xml" />
 
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
+		<jmxAgent id="agent" disabled="true"/>
+		
+		<!--  devicemgmt.wsdl -->
+		<routeContextRef ref="DeviceRoutes" />
+
+		<!--  events.wsdl -->
+		<routeContextRef ref="EventRoutes" />
+
+		<!--  events.wsdl -->
+		<routeContextRef ref="RecordingRoutes" />
+
+		<!--  replay.wsdl -->
+		<routeContextRef ref="ReplayRoutes" />
+
+		<!--  ptz.wsdl -->
+		<routeContextRef ref="PTZRoutes" />
+
 		<!--  log -->
 		<intercept>
 			<to uri="log:interceptor?showHeaders=true&amp;level=INFO" />
 		</intercept>
 		
-		<!--  test -->
+		
+		<!--  hello -->
 		<route>
 			<from uri="servlet:///hello" />
 			<setBody>
 				<constant>Hello</constant>
 			</setBody>
 		</route>
+		
+		<!--  probe -->
 		<route>
 			<from uri="servlet:///probe" />
 			<setBody>
@@ -51,175 +58,6 @@
 				</groovy>
 			</setBody>
 			<to uri="cxf:/discovery?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryClient&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD"/>
-		</route>
-
-		<!--  replay.wsdl -->
-		<route>
-			<from uri="cxf:bean:ReplayPort?loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetReplayUri'</simple>
-					<to uri="seda:GetReplayUri"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
-		</route>
-		<route>
-			<from uri="seda:GetReplayUri" />			
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver10.replay.wsdl.GetReplayUriResponse();
-					response.setUri("rtsp://x.y.y.z/replay");
-					response;
-				</groovy>
-			</setBody>
-		</route>
-
-		<!--  recording.wsdl -->
-		<route>
-			<from uri="cxf:/RecordingPort?serviceClass=org.onvif.ver10.recording.wsdl.RecordingPort&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetServiceCapabilities'</simple>
-					<to uri="seda:GetServiceCapabilities"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
-		</route>
-		<route>
-			<from uri="seda:GetServiceCapabilities" />			
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver10.recording.wsdl.GetServiceCapabilitiesResponse();
-					response;
-				</groovy>
-			</setBody>
-		</route>
-
-		<!--  event.wsdl -->
-		<route>
-			<from uri="cxf:/PullPointSubscription?serviceClass=org.onvif.ver10.events.wsdl.PullPointSubscription&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'PullMessagesRequest'</simple>
-					<to uri="seda:PullMessages"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
-		</route>
-		<route>
-			<from uri="seda:PullMessages" />
-			<setBody>
-				<groovy>
-					elt = new javax.xml.bind.JAXBElement&lt;String&gt;(new javax.xml.namespace.QName("url","tag"),String.class, "message");
-					
-					message = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType.Message();
-					message.setAny(elt);
-
-					notification = new org.oasis_open.docs.wsn.b_2.NotificationMessageHolderType();
-					notification.setMessage(message);
-
-					response = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
-					response.getNotificationMessage().add(notification);
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="cxf:/EventPortType?serviceClass=org.onvif.ver10.events.wsdl.EventPortType&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<setFaultBody>
-				<simple>SOAP_FAULT</simple>
-			</setFaultBody>
-		</route>
-
-		<!-- devicemgmt.wsdl -->
-		<route>
-			<from uri="cxf:bean:DeviceEndpoint?dataFormat=PAYLOAD&amp;loggingFeatureEnabled=true" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetCapabilities'</simple>
-					<to uri="seda:GetCapabilities"/>
-				</when>
-				<when>
-					<simple>${header.operationName} == 'GetDeviceInformation'</simple>
-					<to uri="seda:GetDeviceInformation"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
-		</route>
-		<route>
-			<from uri="seda:GetCapabilities" />
-			<setBody>
-				<groovy>
-					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
-					deviceCapability.setXAddr("http://a.b.c.d/device");
-					eventCapability = new org.onvif.ver10.schema.EventCapabilities()
-					eventCapability.setXAddr("http://a.b.c.d/events");
-					
-					capabilities =  new org.onvif.ver10.schema.Capabilities();
-					capabilities.setDevice(deviceCapability);
-					capabilities.setEvents(eventCapability);
-					
-					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
-					response.setCapabilities(capabilities);
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="seda:GetDeviceInformation" />
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver10.device.wsdl.GetDeviceInformationResponse();
-					response.setManufacturer("Manufacturer");
-					response.setModel("Model");
-					response.setFirmwareVersion("FirmwareVersion");
-					response.setSerialNumber("SerialNumber");
-					response.setHardwareId("HardwareId");
-					response;
-				</groovy>
-			</setBody>
-		</route>
-
-		<!--  ptz.wsdl -->
-		<route>
-			<from uri="cxf:/PTZ?serviceClass=org.onvif.ver20.ptz.wsdl.PTZ&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetConfigurations'</simple>
-					<to uri="seda:GetConfigurations"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
-		</route>
-		<route>
-			<from uri="seda:GetConfigurations" />
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver20.ptz.wsdl.GetConfigurationsResponse();
-					response;
-				</groovy>
-			</setBody>
 		</route>
 
 		<!--  discovery -->
