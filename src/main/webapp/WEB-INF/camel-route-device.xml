@@ -1,0 +1,73 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+
+
+	<!-- devicemgmt.wsdl -->
+	<cxf:cxfEndpoint id="Device" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
+		<cxf:binding> 
+			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
+		</cxf:binding> 
+	</cxf:cxfEndpoint>
+
+	<routeContext id="DeviceRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<from uri="cxf:bean:DeviceEndpoint?dataFormat=PAYLOAD&amp;loggingFeatureEnabled=true" />
+			<choice>
+				<when>
+					<simple>${header.operationName} == 'GetCapabilities'</simple>
+					<to uri="seda:GetCapabilities"/>
+				</when>
+				<when>
+					<simple>${header.operationName} == 'GetDeviceInformation'</simple>
+					<to uri="seda:GetDeviceInformation"/>
+				</when>
+				<otherwise>
+					<setFaultBody>
+						<simple>SOAP_FAULT</simple>
+					</setFaultBody>
+				</otherwise>
+			</choice>
+		</route>
+		<route>
+			<from uri="seda:GetCapabilities" />
+			<setBody>
+				<groovy>
+					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
+					deviceCapability.setXAddr("http://a.b.c.d/device");
+					eventCapability = new org.onvif.ver10.schema.EventCapabilities()
+					eventCapability.setXAddr("http://a.b.c.d/events");
+					
+					capabilities =  new org.onvif.ver10.schema.Capabilities();
+					capabilities.setDevice(deviceCapability);
+					capabilities.setEvents(eventCapability);
+					
+					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					response.setCapabilities(capabilities);
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="seda:GetDeviceInformation" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetDeviceInformationResponse();
+					response.setManufacturer("Manufacturer");
+					response.setModel("Model");
+					response.setFirmwareVersion("FirmwareVersion");
+					response.setSerialNumber("SerialNumber");
+					response.setHardwareId("HardwareId");
+					response;
+				</groovy>
+			</setBody>
+		</route>
+	</routeContext>
+
+</beans>
