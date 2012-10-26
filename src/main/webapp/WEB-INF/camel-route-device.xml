@@ -41,13 +41,13 @@
 				<groovy>
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
 					deviceCapability.setXAddr("http://a.b.c.d/device");
-					eventCapability = new org.onvif.ver10.schema.EventCapabilities()
+					eventCapability = new org.onvif.ver10.schema.EventCapabilities();
 					eventCapability.setXAddr("http://a.b.c.d/events");
 					extendCapability = new org.onvif.ver10.schema.CapabilitiesExtension();
 					replayCapability = new org.onvif.ver10.schema.ReplayCapabilities();
 					extendCapability.setReplay(replayCapability);
 					recordCapability = new org.onvif.ver10.schema.RecordingCapabilities();
-					extendCapability.setReplay(recordCapability);
+					extendCapability.setRecording(recordCapability);
 					
 					capabilities =  new org.onvif.ver10.schema.Capabilities();
 					capabilities.setDevice(deviceCapability);

@@ -25,7 +25,7 @@
 			<from uri="cxf:bean:PullPointSubscription?dataFormat=PAYLOAD" />
 			<choice>
 				<when>
-					<simple>${header.operationName} == 'PullMessagesRequest'</simple>
+					<simple>${header.operationName} == 'PullMessages'</simple>
 					<to uri="seda:PullMessages"/>
 				</when>
 				<otherwise>
