@@ -1,24 +1,39 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
+	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+				http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	
+    
+	<import resource="camel-route-discovery.xml" />
 	<import resource="camel-route-device.xml" />
 	<import resource="camel-route-events.xml" />
 	<import resource="camel-route-recording.xml" />
 	<import resource="camel-route-replay.xml" />
 	<import resource="camel-route-ptz.xml" />
 
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging/>
+		</cxf:features>	
+		<cxf:properties>
+			<entry key="org.apache.cxf.service.ws-discovery.address" value="http://127.0.0.1:9999" />
+		</cxf:properties>
+	</cxf:bus>
+
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
 		<jmxAgent id="agent" disabled="true"/>
-		
+
+		<!--  remotediscovery.wsdl -->
+		<routeContextRef ref="DiscoveryRoutes" />
+
 		<!--  devicemgmt.wsdl -->
 		<routeContextRef ref="DeviceRoutes" />
 
