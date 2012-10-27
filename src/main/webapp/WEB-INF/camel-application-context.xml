@@ -28,7 +28,7 @@
 		</cxf:properties>
 	</cxf:bus>
 
-	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
+	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="false">
 		<jmxAgent id="agent" disabled="true"/>
 
 		<!--  remotediscovery.wsdl -->
@@ -51,7 +51,7 @@
 
 		<!--  log -->
 		<intercept>
-			<to uri="log:interceptor?showHeaders=true&amp;level=INFO" />
+			<to uri="log:interceptor?showHeaders=false&amp;level=INFO" />
 		</intercept>
 		
 		
@@ -68,16 +68,24 @@
 			<from uri="servlet:///probe" />
 			<setBody>
 				<groovy>
-					request = new org.apache.cxf.ws.discovery.wsdl.GetClient();
-					request;
+					client = new org.apache.cxf.ws.discovery.WSDiscoveryClient();
+					println "###############servlet:///probe wsclient address:" + client.getAddress() + "#############";
+					response = client.probe();
+					println "############################";
+					
+					content = "&lt;root&gt;";
+					response.each( { content += it } );
+					content += "&lt;/root&gt;";
+					
+					result = "&lt;?xml version=\"1.0\"?&gt;";
+					result += content.replaceAll(/&lt;\?xml[^\?]*\?&gt;/,'');
 				</groovy>
 			</setBody>
-			<to uri="cxf:/discovery?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryClient&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD"/>
 		</route>
 
 		<!--  discovery -->
 		<route>
-			<from uri="cxf:/discovery?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryService&amp;loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD"/>
+			<from uri="cxf:/discovery?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryService&amp;dataFormat=PAYLOAD"/>
 			<to uri="log:discovery"/>
 		</route>
 

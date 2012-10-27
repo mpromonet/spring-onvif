@@ -15,24 +15,30 @@
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
-	<cxf:cxfEndpoint id="RemoteDiscoveryPort" address="/RemoteDiscoveryPort" serviceClass="org.onvif.ver10.network.wsdl.RemoteDiscoveryPort">
-		<cxf:binding> 
-			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
-
 	<routeContext id="DiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- lookup -->
 		<route>
 			<from uri="cxf:bean:DiscoveryLookupPort?dataFormat=PAYLOAD" />
-			<setFaultBody>
-				<simple>SOAP_FAULT</simple>
-			</setFaultBody>
+			<choice>
+				<when>
+					<simple>${header.operationName} == 'Probe'</simple>
+					<to uri="seda:Probe"/>
+				</when>
+				<otherwise>
+					<setFaultBody>
+						<simple>SOAP_FAULT</simple>
+					</setFaultBody>
+				</otherwise>
+			</choice>
 		</route>
 		<route>
-			<from uri="cxf:bean:RemoteDiscoveryPort?dataFormat=PAYLOAD" />
-			<setFaultBody>
-				<simple>SOAP_FAULT</simple>
-			</setFaultBody>
-		</route>
+			<from uri="seda:Probe" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.network.wsdl.ProbeResponse();
+					response;
+				</groovy>
+			</setBody>
+		</route>		
 	</routeContext>
 </beans>
