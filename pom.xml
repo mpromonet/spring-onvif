@@ -147,6 +147,8 @@
 							<defaultOptions>
 								<extraargs>
 									<extraarg>-verbose</extraarg>
+									<extraarg>-catalog</extraarg>
+									<extraarg>${basedir}/src/main/resources/jax-ws-catalog.xml</extraarg>
 								</extraargs>
 							</defaultOptions>
 						</configuration>
