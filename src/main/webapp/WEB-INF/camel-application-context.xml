@@ -14,9 +14,12 @@
     
 	<import resource="camel-route-discovery.xml" />
 	<import resource="camel-route-device.xml" />
+	<import resource="camel-route-deviceio.xml" />
 	<import resource="camel-route-events.xml" />
 	<import resource="camel-route-recording.xml" />
 	<import resource="camel-route-replay.xml" />
+	<import resource="camel-route-imaging.xml" />
+	<import resource="camel-route-media.xml" />
 	<import resource="camel-route-ptz.xml" />
 
 	<cxf:bus>
@@ -37,14 +40,23 @@
 		<!--  devicemgmt.wsdl -->
 		<routeContextRef ref="DeviceRoutes" />
 
+		<!--  deviceio.wsdl -->
+		<routeContextRef ref="DeviceIORoutes" />
+
 		<!--  events.wsdl -->
 		<routeContextRef ref="EventRoutes" />
 
-		<!--  events.wsdl -->
+		<!--  recording.wsdl -->
 		<routeContextRef ref="RecordingRoutes" />
 
 		<!--  replay.wsdl -->
 		<routeContextRef ref="ReplayRoutes" />
+
+		<!--  imaging.wsdl -->
+		<routeContextRef ref="ImagingRoutes" />
+
+		<!--  media.wsdl -->
+		<routeContextRef ref="MediaRoutes" />
 
 		<!--  ptz.wsdl -->
 		<routeContextRef ref="PTZRoutes" />
@@ -83,9 +95,9 @@
 			</setBody>
 		</route>
 
-		<!--  discovery -->
+		<!--  cxf discovery proxy -->
 		<route>
-			<from uri="cxf:/discovery?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryService&amp;dataFormat=PAYLOAD"/>
+			<from uri="cxf:/DiscoveryProxy?serviceClass=org.apache.cxf.ws.discovery.WSDiscoveryService&amp;dataFormat=PAYLOAD"/>
 			<to uri="log:discovery"/>
 		</route>
 

@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+
+
+	<cxf:cxfEndpoint id="ImagingPort" address="/ImagingPort" serviceClass="org.onvif.ver20.imaging.wsdl.ImagingPort">
+		<cxf:binding> 
+			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
+		</cxf:binding> 
+	</cxf:cxfEndpoint>
+
+	<routeContext id="ImagingRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<from uri="cxf:bean:ImagingPort?loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
+			<choice>
+				<when>
+					<simple>${header.operationName} == 'GetServiceCapabilities'</simple>
+					<to uri="seda:ImagingPort:GetServiceCapabilities"/>
+				</when>
+				<otherwise>
+					<setFaultBody>
+						<simple>SOAP_FAULT</simple>
+					</setFaultBody>
+				</otherwise>
+			</choice>
+		</route>
+		<route>
+			<from uri="seda:ImagingPort:GetServiceCapabilities" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver20.imaging.wsdl.GetServiceCapabilitiesResponse();
+					response;
+				</groovy>
+			</setBody>
+		</route>
+	</routeContext>
+</beans>
