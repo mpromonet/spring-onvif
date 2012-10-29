@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
-	<system systemId="http://www.onvif.org/onvif/ver10/schema/onvif.xsd" uri="wsdl/local/onvif.xsd"/>
 	<system systemId="http://www.onvif.org/ver10/schema/onvif.xsd" uri="wsdl/local/onvif.xsd"/>
 	<system systemId="http://www.w3.org/2005/08/addressing/ws-addr.xsd" uri="wsdl/local/ws-addr.xsd"/>
 	<system systemId="http://www.w3.org/2001/xml.xsd" uri="wsdl/local/xml.xsd"/>
