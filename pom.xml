@@ -17,24 +17,9 @@
 		<cxf-version>2.7.0</cxf-version>
 		<java-version>1.6</java-version>
 		<!-- plugins version -->
-		<cloudbees-version>1.3.2</cloudbees-version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 	</properties>
-	
-	<pluginRepositories>
-		<pluginRepository>
-			<id>cloudbees-public-release</id>
-			<url>http://repository-cloudbees.forge.cloudbees.com/public-release</url>
-			<releases>
-			<enabled>true</enabled>
-			</releases>
-			<snapshots>
-			<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
-  
+	  
 	<dependencies>
 		<!-- Logging -->
 		<dependency>
@@ -107,7 +92,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<defaultGoal>bees:run</defaultGoal>
+		<defaultGoal>tomcat:run</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -147,10 +132,19 @@
 			</plugin>			
 			
 			<plugin>
-				<groupId>com.cloudbees</groupId>
-				<artifactId>bees-maven-plugin</artifactId>
-				<version>${cloudbees-version}</version>
-			</plugin> 
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<configuration>
+					<useBlueprint>true</useBlueprint>
+				</configuration>
+			</plugin>   
+
+			<plugin>
+				<groupId>org.ops4j</groupId>
+				<artifactId>maven-pax-plugin</artifactId>
+				<version>1.4</version>
+			</plugin>
+  
 		</plugins>
 	</build>	
 </project>
