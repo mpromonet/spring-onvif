@@ -9,29 +9,19 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<cxf:cxfEndpoint id="ReplayPort" address="/ReplayPort" serviceClass="org.onvif.ver10.replay.wsdl.ReplayPort">
+	<cxf:cxfEndpoint id="CxfReplay" address="/ReplayPort" serviceClass="org.onvif.ver10.replay.wsdl.ReplayPort">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
 	<routeContext id="ReplayRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="cxf:bean:ReplayPort?loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetReplayUri'</simple>
-					<to uri="seda:GetReplayUri"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
+		<route id="Replay">
+			<from uri="cxf:bean:CxfReplay?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 		<route>
-			<from uri="seda:GetReplayUri" />			
+			<from uri="seda:Replay_GetReplayUri" />			
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.replay.wsdl.GetReplayUriResponse();

@@ -8,35 +8,25 @@
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
-	<cxf:cxfEndpoint id="PullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
+	<cxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
-	<cxf:cxfEndpoint id="EventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
+	<cxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
-	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
-		<route>
-			<from uri="cxf:bean:PullPointSubscription?dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'PullMessages'</simple>
-					<to uri="seda:PullMessages"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
+	<routeContext id="PullPointSubscriptionRoutes" xmlns="http://camel.apache.org/schema/spring" >
+		<route id="PullPointSubscription">
+			<from uri="cxf:bean:CxfPullPointSubscription?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 		<route>
-			<from uri="seda:PullMessages" />
+			<from uri="seda:PullPointSubscription_PullMessages" />
 			<setBody>
 				<groovy>
 					elt = new javax.xml.bind.JAXBElement&lt;String&gt;(new javax.xml.namespace.QName("url","tag"),String.class, "message");
@@ -53,11 +43,12 @@
 				</groovy>
 			</setBody>
 		</route>
-		<route>
-			<from uri="cxf:bean:EventPortType?dataFormat=PAYLOAD" />
-			<setFaultBody>
-				<simple>SOAP_FAULT</simple>
-			</setFaultBody>
+	</routeContext>
+		
+	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
+		<route id="EventPortType">
+			<from uri="cxf:bean:CxfEventPortType?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 	</routeContext>
 </beans>

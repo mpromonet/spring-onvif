@@ -9,29 +9,19 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<cxf:cxfEndpoint id="DeviceIOPort" address="/DeviceIOPort" serviceClass="org.onvif.ver10.deviceio.wsdl.DeviceIOPort">
+	<cxf:cxfEndpoint id="CxfDeviceIOPort" address="/DeviceIOPort" serviceClass="org.onvif.ver10.deviceio.wsdl.DeviceIOPort">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
 	<routeContext id="DeviceIORoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="cxf:bean:DeviceIOPort?loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetServiceCapabilities'</simple>
-					<to uri="seda:DeviceIOPort:GetServiceCapabilities"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
+		<route id="DeviceIOPort">
+			<from uri="cxf:bean:CxfDeviceIOPort?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 		<route>
-			<from uri="seda:DeviceIOPort:GetServiceCapabilities" />			
+			<from uri="seda:DeviceIOPort_GetServiceCapabilities" />			
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.deviceio.wsdl.GetServiceCapabilitiesResponse();

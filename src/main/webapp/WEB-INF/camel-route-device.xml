@@ -10,33 +10,19 @@
 
 
 	<!-- devicemgmt.wsdl -->
-	<cxf:cxfEndpoint id="Device" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
+	<cxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
 	<routeContext id="DeviceRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="cxf:bean:Device?dataFormat=PAYLOAD&amp;loggingFeatureEnabled=true" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetCapabilities'</simple>
-					<to uri="seda:GetCapabilities"/>
-				</when>
-				<when>
-					<simple>${header.operationName} == 'GetDeviceInformation'</simple>
-					<to uri="seda:GetDeviceInformation"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
+		<route id="Device">
+			<from uri="cxf:bean:CxfDevice?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 		<route>
-			<from uri="seda:GetCapabilities" />
+			<from uri="seda:Device_GetCapabilities" />
 			<setBody>
 				<groovy>
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
@@ -61,7 +47,7 @@
 			</setBody>
 		</route>
 		<route>
-			<from uri="seda:GetDeviceInformation" />
+			<from uri="seda:Device_GetDeviceInformation" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.device.wsdl.GetDeviceInformationResponse();

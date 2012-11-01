@@ -45,6 +45,7 @@
 
 		<!--  events.wsdl -->
 		<routeContextRef ref="EventRoutes" />
+		<routeContextRef ref="PullPointSubscriptionRoutes" />
 
 		<!--  recording.wsdl -->
 		<routeContextRef ref="RecordingRoutes" />
@@ -65,10 +66,31 @@
 		<intercept>
 			<to uri="log:interceptor?showHeaders=false&amp;level=INFO" />
 		</intercept>
-		
+
+		<!--  processor from Cxf endpoint to WS processor-->
+		<route id="WsRouter">
+			<from uri="direct:WsRouter" />
+			<doTry>
+				<setHeader headerName="target">
+					<groovy>"seda:" + exchange.getFromRouteId() + "_" + request.getHeader("operationName") +"?timeout=1000"</groovy>
+				</setHeader>
+				<recipientList>
+					<header>target</header>
+				</recipientList>	
+				<doCatch>
+					<exception>java.lang.Exception</exception>
+					<setFaultBody>
+						<groovy>
+							new  java.lang.IllegalArgumentException(exchange.getFromEndpoint() .getEndpointUri() + ":" +  exchange.getFromRouteId() + "_"  + request.getHeader("operationName") + " raised en exception" );
+						</groovy>							
+					</setFaultBody>
+					<to uri="log:exception?level=WARN"/>
+				</doCatch>
+			</doTry>
+		</route>
 		
 		<!--  hello -->
-		<route>
+		<route id="HelloServlet">
 			<from uri="servlet:///hello" />
 			<setBody>
 				<constant>Hello</constant>
@@ -76,7 +98,7 @@
 		</route>
 		
 		<!--  probe -->
-		<route>
+		<route  id="ProbeServlet">
 			<from uri="servlet:///probe" />
 			<setBody>
 				<groovy>

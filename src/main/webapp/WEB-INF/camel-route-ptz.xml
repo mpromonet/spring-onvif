@@ -9,29 +9,19 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<cxf:cxfEndpoint id="PTZ" address="/PTZ" serviceClass="org.onvif.ver20.ptz.wsdl.PTZ">
+	<cxf:cxfEndpoint id="CxfPTZ" address="/PTZ" serviceClass="org.onvif.ver20.ptz.wsdl.PTZ">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
 	<routeContext id="PTZRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="cxf:bean:PTZ?dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetConfigurations'</simple>
-					<to uri="seda:GetConfigurations"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
+		<route id="PTZ">
+			<from uri="cxf:bean:CxfPTZ?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 		<route>
-			<from uri="seda:GetConfigurations" />
+			<from uri="seda:PTZ_GetConfigurations" />
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver20.ptz.wsdl.GetConfigurationsResponse();

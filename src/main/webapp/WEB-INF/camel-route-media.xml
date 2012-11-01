@@ -9,29 +9,19 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<cxf:cxfEndpoint id="Media" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
+	<cxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
 	<routeContext id="MediaRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="cxf:bean:Media?loggingFeatureEnabled=true&amp;dataFormat=PAYLOAD" />
-			<choice>
-				<when>
-					<simple>${header.operationName} == 'GetServiceCapabilities'</simple>
-					<to uri="seda:Media:GetServiceCapabilities"/>
-				</when>
-				<otherwise>
-					<setFaultBody>
-						<simple>SOAP_FAULT</simple>
-					</setFaultBody>
-				</otherwise>
-			</choice>
+		<route id="Media">
+			<from uri="cxf:bean:CxfMedia?dataFormat=PAYLOAD" />
+			<to uri="direct:WsRouter" />
 		</route>
 		<route>
-			<from uri="seda:Media:GetServiceCapabilities" />			
+			<from uri="seda:Media_GetServiceCapabilities" />			
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.media.wsdl.GetServiceCapabilitiesResponse();
