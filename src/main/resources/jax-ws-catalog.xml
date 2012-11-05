@@ -16,4 +16,5 @@
 	<!-- for discovery -->
 	<system systemId="http://schemas.xmlsoap.org/ws/2005/04/discovery/ws-discovery.xsd" uri="wsdl/local/ws-discovery.xsd"/>
 	<system systemId="http://schemas.xmlsoap.org/ws/2004/08/addressing" uri="wsdl/local/wsa.xsd"/>
+	<system systemId="http://www.w3.org/2006/03/addressing/ws-addr.xsd"uri=" wsdl/local/ws-addr2006.xsd"/>
 </catalog>
