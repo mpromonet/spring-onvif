@@ -25,19 +25,26 @@
 			<from uri="seda:Device_GetCapabilities" />
 			<setBody>
 				<groovy>
+					url = "http://" + java.net.InetAddress.getLocalHost() + " /webservices";
+				
+					capabilities =  new org.onvif.ver10.schema.Capabilities();
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
-					deviceCapability.setXAddr("http://a.b.c.d/device");
+					deviceCapability.setXAddr(url+"/Device");
+					capabilities.setDevice(deviceCapability);
+					
 					eventCapability = new org.onvif.ver10.schema.EventCapabilities();
-					eventCapability.setXAddr("http://a.b.c.d/events");
+					eventCapability.setXAddr(url+"/PullPointSubscription");
+					capabilities.setEvents(eventCapability);
+
+					mediaCapability = new org.onvif.ver10.schema.MediaCapabilities();
+					mediaCapability.setXAddr(url+"/Media");
+					capabilities.setMedia(mediaCapability);
+
 					extendCapability = new org.onvif.ver10.schema.CapabilitiesExtension();
 					replayCapability = new org.onvif.ver10.schema.ReplayCapabilities();
 					extendCapability.setReplay(replayCapability);
 					recordCapability = new org.onvif.ver10.schema.RecordingCapabilities();
-					extendCapability.setRecording(recordCapability);
-					
-					capabilities =  new org.onvif.ver10.schema.Capabilities();
-					capabilities.setDevice(deviceCapability);
-					capabilities.setEvents(eventCapability);
+					extendCapability.setRecording(recordCapability);					
 					capabilities.setExtension(extendCapability);
 					
 					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();

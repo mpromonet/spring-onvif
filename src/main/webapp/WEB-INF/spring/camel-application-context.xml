@@ -11,7 +11,8 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-    
+	<import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" /> 
+
 	<import resource="camel-route-discovery.xml" />
 	<import resource="camel-route-device.xml" />
 	<import resource="camel-route-deviceio.xml" />

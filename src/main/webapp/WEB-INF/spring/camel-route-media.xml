@@ -29,5 +29,26 @@
 				</groovy>
 			</setBody>
 		</route>
+		<route>
+			<from uri="seda:Media_GetVideoSources" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetVideoSourcesResponse();
+					
+					resolution = new org.onvif.ver10.schema.VideoResolution();
+					resolution.setWidth(640);
+					resolution.getHeight(480);
+					
+					source = new org.onvif.ver10.schema.VideoSource()
+					source.setToken("token0");
+					source.setResolution(resolution);
+					
+					response.getVideoSources().add(source);
+					
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		
 	</routeContext>
 </beans>
