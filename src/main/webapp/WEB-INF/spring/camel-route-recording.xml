@@ -10,6 +10,9 @@
 
 
 	<cxf:cxfEndpoint id="CxfRecordingPort" address="/RecordingPort" serviceClass="org.onvif.ver10.recording.wsdl.RecordingPort">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>    	
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
@@ -17,7 +20,7 @@
 
 	<routeContext id="RecordingRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<route id="RecordingPort">
-			<from uri="cxf:bean:CxfRecordingPort?dataFormat=PAYLOAD" />
+			<from uri="cxf:bean:CxfRecordingPort" />
 			<to uri="direct:WsRouter" />
 		</route>
 		<route>

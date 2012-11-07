@@ -10,6 +10,9 @@
 
 
 	<cxf:cxfEndpoint id="CxfDiscoveryLookupPort" address="/DiscoveryLookupPort" serviceClass="org.onvif.ver10.network.wsdl.DiscoveryLookupPort">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>    	
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
@@ -18,7 +21,7 @@
 	<routeContext id="DiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<!-- lookup -->
 		<route id="DiscoveryLookup">
-			<from uri="cxf:bean:CxfDiscoveryLookupPort?dataFormat=PAYLOAD" />
+			<from uri="cxf:bean:CxfDiscoveryLookupPort" />
 			<to uri="direct:WsRouter" />
 		</route>
 		<route>

@@ -9,12 +9,18 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 	<cxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>    	
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
 	</cxf:cxfEndpoint>
 
 	<cxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>    	
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
@@ -22,7 +28,7 @@
 
 	<routeContext id="PullPointSubscriptionRoutes" xmlns="http://camel.apache.org/schema/spring" >
 		<route id="PullPointSubscription">
-			<from uri="cxf:bean:CxfPullPointSubscription?dataFormat=PAYLOAD" />
+			<from uri="cxf:bean:CxfPullPointSubscription" />
 			<to uri="direct:WsRouter" />
 		</route>
 		<route>
@@ -47,7 +53,7 @@
 		
 	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
 		<route id="EventPortType">
-			<from uri="cxf:bean:CxfEventPortType?dataFormat=PAYLOAD" />
+			<from uri="cxf:bean:CxfEventPortType" />
 			<to uri="direct:WsRouter" />
 		</route>
 	</routeContext>

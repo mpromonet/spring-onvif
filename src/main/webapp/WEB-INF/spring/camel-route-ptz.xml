@@ -10,6 +10,9 @@
 
 
 	<cxf:cxfEndpoint id="CxfPTZ" address="/PTZ" serviceClass="org.onvif.ver20.ptz.wsdl.PTZ">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>    	
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
@@ -17,7 +20,7 @@
 
 	<routeContext id="PTZRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<route id="PTZ">
-			<from uri="cxf:bean:CxfPTZ?dataFormat=PAYLOAD" />
+			<from uri="cxf:bean:CxfPTZ" />
 			<to uri="direct:WsRouter" />
 		</route>
 		<route>

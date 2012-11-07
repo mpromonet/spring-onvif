@@ -11,6 +11,9 @@
 
 	<!-- devicemgmt.wsdl -->
 	<cxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>    
 		<cxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</cxf:binding> 
@@ -18,7 +21,7 @@
 
 	<routeContext id="DeviceRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<route id="Device">
-			<from uri="cxf:bean:CxfDevice?dataFormat=PAYLOAD" />
+			<from uri="cxf:bean:CxfDevice" />
 			<to uri="direct:WsRouter" />
 		</route>
 		<route>
