@@ -24,8 +24,8 @@
 		<route>
 			<from uri="seda:Device_GetCapabilities" />
 			<setBody>
-				<groovy>
-					url = "http://" + request.getHeader("host");
+				<groovy>				
+					url = request.getHeader("CamelCxfMessage")["http.base.path"]+ "/webservices";
 				
 					capabilities =  new org.onvif.ver10.schema.Capabilities();
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
