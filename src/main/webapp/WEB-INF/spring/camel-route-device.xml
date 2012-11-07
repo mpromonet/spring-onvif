@@ -25,7 +25,7 @@
 			<from uri="seda:Device_GetCapabilities" />
 			<setBody>
 				<groovy>
-					url = "http://" + java.net.InetAddress.getLocalHost() + " /webservices";
+					url = "http://" + java.net.InetAddress.getLocalHost() + ":8080/webservices";
 				
 					capabilities =  new org.onvif.ver10.schema.Capabilities();
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
