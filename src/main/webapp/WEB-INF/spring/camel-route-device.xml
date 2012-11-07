@@ -25,7 +25,7 @@
 			<from uri="seda:Device_GetCapabilities" />
 			<setBody>
 				<groovy>
-					url = request.getHeader("CamelHttpBaseUri");
+					url = "http://" + request.getHeader("host");
 				
 					capabilities =  new org.onvif.ver10.schema.Capabilities();
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
