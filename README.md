@@ -1,12 +1,14 @@
 Spring-ONVIF
 --------------------
-
-Implement ONVIF Services using :
-- Spring Framework
+ONVIF Device Services using Spring Framework involving :
 - Apache CXF for WS endpoints
-- Apache Camel to route request to dedicated SOAP processor
-- Groovy to process SOAP request and fill SOAP answer
+- Apache Camel to route request to SOAP processor
+- Groovy to implement SOAP request processing
 
-Container is a war, but should be possible as jar and osgi.
+Container is a war, but should be possible to use a jar assembly or an osgi bundle.
 
-Try to not use any java code, only spring DSL !
+Use spring DSL and generated java code, only XML mess !
+
+License
+------------
+Domain public.

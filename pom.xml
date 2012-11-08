@@ -1,11 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>test</groupId>
-	<artifactId>spring-onvif</artifactId>
+	<groupId>spring</groupId>
+	<artifactId>onvif-device</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>Spring Cxf|Camel|Groovy ONVIF</name>	
+	<name>ONVIF Device</name>	
+	<description>ONVIF Device based on spring framework (Cxf|Camel|Groovy)</description>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -15,8 +17,8 @@
 		<slf4j-version>1.5.8</slf4j-version>
 		<groovy-version>1.8.6</groovy-version>
 		<cxf-version>2.7.0</cxf-version>
-		<java-version>1.6</java-version>
 		<!-- plugins version -->
+		<java-version>1.6</java-version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 	</properties>
 	  
@@ -32,6 +34,14 @@
 		<url>https://mpromonet.ci.cloudbees.com/job/camelCxf</url>
 	</ciManagement>
   
+	<licenses>
+		<license>
+			<name>Public domain (Unlicense)</name>
+			<url>http://unlicense.org/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<dependencies>
 		<!-- Logging -->
 		<dependency>
