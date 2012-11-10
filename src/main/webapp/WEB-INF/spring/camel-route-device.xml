@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -10,48 +10,87 @@
 
 
 	<!-- devicemgmt.wsdl -->
-	<cxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
-		<cxf:properties>
+	<camelcxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
+		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-		</cxf:properties>    
-		<cxf:binding> 
+		</camelcxf:properties>    
+		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
 
 	<routeContext id="DeviceRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<route id="Device">
 			<from uri="cxf:bean:CxfDevice" />
-			<to uri="direct:WsRouter" />
+			<to uri="direct:SoapDispatcher" />
 		</route>
 		<route>
 			<from uri="seda:Device_GetCapabilities" />
 			<setBody>
 				<groovy>				
+					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					capabilities =  new org.onvif.ver10.schema.Capabilities();
+					extendCapability = new org.onvif.ver10.schema.CapabilitiesExtension();
+					
 					url = request.getHeader("CamelCxfMessage")["http.base.path"]+ "/webservices";
 				
-					capabilities =  new org.onvif.ver10.schema.Capabilities();
 					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
 					deviceCapability.setXAddr(url+"/Device");
+					onvifversion = new org.onvif.ver10.schema.OnvifVersion();
+					onvifversion.setMajor(properties.resolve("onvif.major").toInteger() );
+					onvifversion.setMinor(properties.resolve("onvif.minor").toInteger());
+					systemCapability = new org.onvif.ver10.schema.SystemCapabilities();
+					systemCapability.getSupportedVersions().add(onvifversion);
+					deviceCapability.setSystem(systemCapability);
+					networkCapability = new org.onvif.ver10.schema.NetworkCapabilities();
+					deviceCapability.setNetwork(networkCapability);
 					capabilities.setDevice(deviceCapability);
 					
-					eventCapability = new org.onvif.ver10.schema.EventCapabilities();
-					eventCapability.setXAddr(url+"/PullPointSubscription");
-					capabilities.setEvents(eventCapability);
+					if (properties.resolve("service.deviceio.enabled") != "0")
+					{
+						deviceIOCapability = new org.onvif.ver10.schema.DeviceIOCapabilities();
+						deviceIOCapability.setXAddr(url+"/DeviceIO");
+						extendCapability.setDeviceIO(deviceIOCapability);
+					}
 
-					mediaCapability = new org.onvif.ver10.schema.MediaCapabilities();
-					mediaCapability.setXAddr(url+"/Media");
-					capabilities.setMedia(mediaCapability);
+					if (properties.resolve("service.event.enabled") != "0")
+					{
+						eventCapability = new org.onvif.ver10.schema.EventCapabilities();
+						eventCapability.setXAddr(url+"/EventPortType");
+						capabilities.setEvents(eventCapability);
+					}
 
-					extendCapability = new org.onvif.ver10.schema.CapabilitiesExtension();
-					replayCapability = new org.onvif.ver10.schema.ReplayCapabilities();
-					extendCapability.setReplay(replayCapability);
-					recordCapability = new org.onvif.ver10.schema.RecordingCapabilities();
-					extendCapability.setRecording(recordCapability);					
-					capabilities.setExtension(extendCapability);
+					if (properties.resolve("service.media.enabled") != "0")
+					{
+						mediaCapability = new org.onvif.ver10.schema.MediaCapabilities();
+						mediaCapability.setXAddr(url+"/Media");
+						capabilities.setMedia(mediaCapability);
+					}
+
+					if (properties.resolve("service.ptz.enabled") != "0")
+					{
+						ptzCapability = new org.onvif.ver10.schema.PTZCapabilities();
+						ptzCapability.setXAddr(url+"/PTZ");
+						capabilities.setPTZ(ptzCapability);
+					}
+
+					if (properties.resolve("service.replay.enabled") != "0")
+					{
+						replayCapability = new org.onvif.ver10.schema.ReplayCapabilities();
+						replayCapability.setXAddr(url+"/Replay");
+						extendCapability.setReplay(replayCapability);
+					}
 					
-					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
+					if (properties.resolve("service.recording.enabled") != "0")
+					{
+						recordCapability = new org.onvif.ver10.schema.RecordingCapabilities();
+						recordCapability.setXAddr(url+"/Recording");
+						extendCapability.setRecording(recordCapability);	
+					}
+										
+					capabilities.setExtension(extendCapability);					
 					response.setCapabilities(capabilities);
+					
 					response;
 				</groovy>
 			</setBody>
@@ -61,11 +100,13 @@
 			<setBody>
 				<groovy>
 					response = new org.onvif.ver10.device.wsdl.GetDeviceInformationResponse();
-					response.setManufacturer("Manufacturer");
-					response.setModel("Model");
-					response.setFirmwareVersion("FirmwareVersion");
-					response.setSerialNumber("SerialNumber");
-					response.setHardwareId("HardwareId");
+					
+					response.setManufacturer(properties.resolve("deviceid.manufacturer"));
+					response.setModel(properties.resolve("deviceid.model"));
+					response.setFirmwareVersion(properties.resolve("deviceid.firmware"));
+					response.setSerialNumber(properties.resolve("deviceid.serialnumber"));
+					response.setHardwareId(properties.resolve("deviceid.hardwareid"));
+					
 					response;
 				</groovy>
 			</setBody>
@@ -74,12 +115,18 @@
 			<from uri="seda:Device_GetScopes" />
 			<setBody>
 				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetScopesResponse();
+					
 					scope = new org.onvif.ver10.schema.Scope();
 					scope.setScopeDef(org.onvif.ver10.schema.ScopeDefinition.FIXED)
-					scope.setScopeItem("onvif://www.onvif.org/name/__NAME__")
-				
-					response = new org.onvif.ver10.device.wsdl.GetScopesResponse();
+					scope.setScopeItem("onvif://www.onvif.org/name/" + properties.resolve("deviceid.name"))
 					response.getScopes().add(scope);
+
+					scope = new org.onvif.ver10.schema.Scope();
+					scope.setScopeDef(org.onvif.ver10.schema.ScopeDefinition.FIXED)
+					scope.setScopeItem("onvif://www.onvif.org/location/" + properties.resolve("deviceid.location"))
+					response.getScopes().add(scope);
+
 					response;
 				</groovy>
 			</setBody>
@@ -88,24 +135,25 @@
 			<from uri="seda:Device_GetNetworkInterfaces" />
 			<setBody>
 				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetNetworkInterfacesResponse();
+
 					linkLocal = new org.onvif.ver10.schema.PrefixedIPv4Address();
-					linkLocal.setAddress(java.net.InetAddress.getLocalHost());
+					linkLocal.setAddress(java.net.InetAddress.getLocalHost().getHostAddress());
 					linkLocal.setPrefixLength(24);
 					
 					ipv4Config = new org.onvif.ver10.schema.IPv4Configuration();
 					ipv4Config.setDHCP(false);
-					ipv4Config.setLinkLocal(linkLocal);
+					ipv4Config.getManual().add(linkLocal);
 					
 					ipv4 = new org.onvif.ver10.schema.IPv4NetworkInterface();
 					ipv4.setEnabled(true);
-					pv4.setConfig(ipv4Config);
+					ipv4.setConfig(ipv4Config);
 					
 					network = new org.onvif.ver10.schema.NetworkInterface();
 					network.setEnabled(true);
-					network.setIPv4(ipv4);
-				
-					response = new org.onvif.ver10.device.wsdl.GetNetworkInterfacesResponse();
-					response.getScopes().add(network);
+					network.setIPv4(ipv4);				
+					response.getNetworkInterfaces().add(network);
+					
 					response;
 				</groovy>
 			</setBody>
@@ -114,10 +162,51 @@
 			<from uri="seda:Device_GetDNS" />
 			<setBody>
 				<groovy>
-					dns = new org.onvif.ver10.schema.DNSInformation();
-				
 					response = new org.onvif.ver10.device.wsdl.GetDNSResponse();
+					
+					dns = new org.onvif.ver10.schema.DNSInformation();
 					response.setDNSInformation(dns);
+					
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Device_GetNTP" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetNTPResponse();
+					
+					ntp = new org.onvif.ver10.schema.NTPInformation();
+					response.setNTPInformation(ntp);
+					
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Device_GetHostname" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetHostnameResponse();
+
+					host = new org.onvif.ver10.schema.HostnameInformation();
+					host.setName(java.net.InetAddress.getLocalHost().getHostName());
+					response.setHostnameInformation(host);
+					
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Device_GetNetworkDefaultGateway" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetNetworkDefaultGatewayResponse();
+					
+					gw = new org.onvif.ver10.schema.NetworkGateway();
+					response.setNetworkGateway(gw);
+					
 					response;
 				</groovy>
 			</setBody>
@@ -126,8 +215,15 @@
 			<from uri="seda:Device_GetSystemDateAndTime" />
 			<setBody>
 				<groovy>
-					time = new org.onvif.ver10.schema.Time();
+					currentdate = new java.util.GregorianCalendar();
 					date = new org.onvif.ver10.schema.Date();
+					date.setYear(currentdate.get(java.util.Calendar.YEAR));
+					date.setMonth(currentdate.get(java.util.Calendar.MONTH)+1);
+					date.setDay(currentdate.get(java.util.Calendar.DAY_OF_MONTH));
+					time = new org.onvif.ver10.schema.Time();
+					time.setHour(currentdate.get(java.util.Calendar.HOUR));
+					time.setMinute(currentdate.get(java.util.Calendar.MINUTE));
+					time.setSecond(currentdate.get(java.util.Calendar.SECOND));
 					
 					dateTime = new org.onvif.ver10.schema.DateTime();
 					dateTime.setTime(time);
@@ -146,7 +242,56 @@
 					response;
 				</groovy>
 			</setBody>
+		</route>	
+		<route>
+			<from uri="seda:Device_GetUsers" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetUsersResponse();
+					
+					user = new org.onvif.ver10.schema.User();
+					user.setUsername("admin");
+					user.setUserLevel(org.onvif.ver10.schema.UserLevel.ADMINISTRATOR);
+					response.getUser().add(user);
+					
+					response;
+				</groovy>
+			</setBody>
 		</route>				
-	</routeContext>
+		<route>
+			<from uri="seda:Device_GetDiscoveryMode" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetDiscoveryModeResponse();
+					
+					response.setDiscoveryMode(org.onvif.ver10.schema.DiscoveryMode.NON_DISCOVERABLE);
+					
+					response;
+				</groovy>
+			</setBody>
+		</route>				
+		<route>
+			<from uri="seda:Device_GetNetworkProtocols" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.device.wsdl.GetNetworkProtocolsResponse();
+					
+					protocol = new org.onvif.ver10.schema.NetworkProtocol();
+					protocol.setName(org.onvif.ver10.schema.NetworkProtocolType.HTTP);
+					protocol.setEnabled(true);
+					protocol.getPort().add(9999);
+					response.getNetworkProtocols().add(protocol);
 
+					protocol = new org.onvif.ver10.schema.NetworkProtocol();
+					protocol.setName(org.onvif.ver10.schema.NetworkProtocolType.RTSP);
+					protocol.setEnabled(true);
+					protocol.getPort().add(9999);
+					response.getNetworkProtocols().add(protocol);
+
+					response;
+				</groovy>
+			</setBody>
+		</route>				
+		
+	</routeContext>
 </beans>

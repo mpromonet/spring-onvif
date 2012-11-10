@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -9,20 +9,23 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<cxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
-		<cxf:properties>
+	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
+		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-		</cxf:properties>    	
-		<cxf:binding> 
+		</camelcxf:properties>    		
+		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
 
 	<routeContext id="MediaRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- send soap message to dispatcher -->
 		<route id="Media">
 			<from uri="cxf:bean:CxfMedia" />
-			<to uri="direct:WsRouter" />
+			<to uri="direct:SoapDispatcher" />
 		</route>
+		
+		<!-- soap processor -->
 		<route>
 			<from uri="seda:Media_GetServiceCapabilities" />			
 			<setBody>
@@ -40,11 +43,12 @@
 					
 					resolution = new org.onvif.ver10.schema.VideoResolution();
 					resolution.setWidth(640);
-					resolution.getHeight(480);
+					resolution.setHeight(480);
 					
 					source = new org.onvif.ver10.schema.VideoSource()
-					source.setToken("token0");
+					source.setToken("videotoken");
 					source.setResolution(resolution);
+					source.setFramerate(5.0);
 					
 					response.getVideoSources().add(source);
 					
@@ -52,6 +56,179 @@
 				</groovy>
 			</setBody>
 		</route>
+		<route>
+			<from uri="seda:Media_GetAudioSources" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetAudioSourcesResponse();
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="seda:Media_GetAudioSourceConfigurations" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetAudioSourceConfigurationsResponse();					
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Media_GetCompatibleMetadataConfigurations" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetCompatibleMetadataConfigurationsResponse();
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Media_GetVideoEncoderConfigurationOptions" />			
+			<setBody>
+				<groovy>
+					options = new org.onvif.ver10.schema.VideoEncoderConfigurationOptions();
+					
+					response = new org.onvif.ver10.media.wsdl.GetVideoEncoderConfigurationOptionsResponse();
+					response.setOptions(options);
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Media_GetVideoSourceConfigurations" />			
+			<to uri="direct:GetVideoSourceConfiguration" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetVideoSourceConfigurationsResponse();					
+					response.getConfigurations().add(request.body);					
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Media_GetVideoSourceConfiguration" />			
+			<to uri="direct:GetVideoSourceConfiguration" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetVideoSourceConfigurationResponse();					
+					response.setConfiguration(request.body);					
+					response;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="seda:Media_GetProfiles" />			
+			<to uri="direct:GetProfile" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetProfilesResponse();
+					response.getProfiles().add(request.body);
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="seda:Media_GetProfile" />			
+			<to uri="direct:GetProfile" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetProfileResponse();
+					response.setProfile(request.body);
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="seda:Media_GetSnapshotUri" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetSnapshotUriResponse();
+					
+					uri = new org.onvif.ver10.schema.MediaUri();
+					url = properties.resolve("media.snapshoturi.urlbase");
+					if (url =="")
+					{
+						url = request.getHeader("CamelCxfMessage")["http.base.path"];
+					}
+					url += properties.resolve("media.snapshoturi.urlsuffix");
+					uri.setUri(url);
+					
+					response.setMediaUri(uri);
+					response;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="seda:Media_GetStreamUri" />			
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.media.wsdl.GetStreamUriResponse();
+
+					url = properties.resolve("media.streamuri.urlbase");
+					if (url =="")
+					{
+						url = "rtsp://" + java.net.InetAddress.getLocalHost().getHostAddress();
+					}
+					url += properties.resolve("media.streamuri.urlsuffix");
+					
+					uri = new org.onvif.ver10.schema.MediaUri();
+					uri.setUri(url);
+					
+					response.setMediaUri(uri);
+					response;
+				</groovy>
+			</setBody>
+		</route>
 		
+		
+		<!-- tools -->
+		<route>
+			<from uri="direct:GetProfile" />			
+			<to uri="direct:GetVideoSourceConfiguration" />			
+			<setBody>
+				<groovy>				
+					videoSrcConf = request.body;
+
+					resolution = new org.onvif.ver10.schema.VideoResolution();
+					resolution.setWidth(640);
+					resolution.setHeight(480);
+
+					videoEncConf = new org.onvif.ver10.schema.VideoEncoderConfiguration();
+					videoEncConf.setEncoding(org.onvif.ver10.schema.VideoEncoding.H_264);
+					videoEncConf.setResolution(resolution);
+					videoEncConf.setName("encodername");
+					videoEncConf.setToken("encodertoken");
+				
+					profile = new org.onvif.ver10.schema.Profile();
+					profile.setName("profilename");
+					profile.setToken("profiletoken");
+					profile.setVideoSourceConfiguration(videoSrcConf);
+					profile.setVideoEncoderConfiguration(videoEncConf);
+					
+					profile;
+				</groovy>
+			</setBody>
+		</route>		
+		<route>
+			<from uri="direct:GetVideoSourceConfiguration" />			
+			<setBody>
+				<groovy>
+					bounds = new org.onvif.ver10.schema.IntRectangle();
+					bounds.setX(0);
+					bounds.setY(0);
+					bounds.setWidth(640);
+					bounds.setHeight(480);
+				
+					videoSrcConf = new org.onvif.ver10.schema.VideoSourceConfiguration();
+					videoSrcConf.setName("videosrcname");
+					videoSrcConf.setToken("videosrctoken");
+					videoSrcConf.setSourceToken("videotoken");
+					videoSrcConf.setBounds(bounds);
+					
+					videoSrcConf;
+				</groovy>
+			</setBody>
+		</route>				
 	</routeContext>
 </beans>

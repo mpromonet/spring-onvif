@@ -1,35 +1,41 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
-	<cxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
-		<cxf:properties>
+	<camelcxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
+		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-		</cxf:properties>    	
-		<cxf:binding> 
+		</camelcxf:properties>    	
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+		</camelcxf:features>    	
+		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
 
-	<cxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
-		<cxf:properties>
+	<camelcxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
+		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-		</cxf:properties>    	
-		<cxf:binding> 
+		</camelcxf:properties>    	
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+		</camelcxf:features>    	
+		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
 
 	<routeContext id="PullPointSubscriptionRoutes" xmlns="http://camel.apache.org/schema/spring" >
 		<route id="PullPointSubscription">
 			<from uri="cxf:bean:CxfPullPointSubscription" />
-			<to uri="direct:WsRouter" />
+			<to uri="direct:SoapDispatcher" />
 		</route>
 		<route>
 			<from uri="seda:PullPointSubscription_PullMessages" />
@@ -54,7 +60,16 @@
 	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
 		<route id="EventPortType">
 			<from uri="cxf:bean:CxfEventPortType" />
-			<to uri="direct:WsRouter" />
+			<to uri="direct:SoapDispatcher" />
+		</route>
+		<route>
+			<from uri="seda:EventPortType_GetEventProperties" />
+			<setBody>
+				<groovy>
+					response = new org.onvif.ver10.events.wsdl.GetEventPropertiesResponse();
+					response;
+				</groovy>
+			</setBody>
 		</route>
 	</routeContext>
 </beans>
