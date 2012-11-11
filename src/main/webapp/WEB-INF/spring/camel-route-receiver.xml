@@ -9,7 +9,7 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<camelcxf:cxfEndpoint id="CxfDeviceIOPort" address="/DeviceIO" serviceClass="org.onvif.ver10.deviceio.wsdl.DeviceIOPort">
+	<camelcxf:cxfEndpoint id="CxfReceiver" address="/Receiver" serviceClass="org.onvif.ver10.receiver.wsdl.ReceiverPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
 		</camelcxf:properties>    	
@@ -18,9 +18,9 @@
 		</camelcxf:binding> 
 	</camelcxf:cxfEndpoint>
 
-	<routeContext id="DeviceIORoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route id="DeviceIOPort">
-			<from uri="cxf:bean:CxfDeviceIOPort" />
+	<routeContext id="ReceiverRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Receiver">
+			<from uri="cxf:bean:CxfReceiver" />
 			<to uri="direct:SoapProcessor" />
 		</route>
 	</routeContext>

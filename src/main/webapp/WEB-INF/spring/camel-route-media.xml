@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -9,49 +9,20 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
 
-	<cxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
-		<cxf:properties>
+	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
+		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-		</cxf:properties>    	
-		<cxf:binding> 
+		</camelcxf:properties>    		
+		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
 
 	<routeContext id="MediaRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- send soap message to dispatcher -->
 		<route id="Media">
 			<from uri="cxf:bean:CxfMedia" />
-			<to uri="direct:WsRouter" />
-		</route>
-		<route>
-			<from uri="seda:Media_GetServiceCapabilities" />			
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver10.media.wsdl.GetServiceCapabilitiesResponse();
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="seda:Media_GetVideoSources" />			
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver10.media.wsdl.GetVideoSourcesResponse();
-					
-					resolution = new org.onvif.ver10.schema.VideoResolution();
-					resolution.setWidth(640);
-					resolution.getHeight(480);
-					
-					source = new org.onvif.ver10.schema.VideoSource()
-					source.setToken("token0");
-					source.setResolution(resolution);
-					
-					response.getVideoSources().add(source);
-					
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		
+			<to uri="direct:SoapProcessor" />
+		</route>		
 	</routeContext>
 </beans>

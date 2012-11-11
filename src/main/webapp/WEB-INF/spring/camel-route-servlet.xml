@@ -1,0 +1,117 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+				http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+
+	
+	<routeContext id="ServletRoutes" xmlns="http://camel.apache.org/schema/spring">
+	
+		<!--  hello -->
+		<route id="HelloServlet">
+			<from uri="servlet:///hello" />
+			<setBody>
+				<constant>Hello</constant>
+			</setBody>
+		</route>
+		
+		<!--  probe -->
+		<route  id="ProbeServlet">
+			<from uri="servlet:///probe" />
+			<setBody>
+				<groovy>
+					client = new org.apache.cxf.ws.discovery.WSDiscoveryClient();
+					println "###############servlet:///probe wsclient address:" + client.getAddress() + "#############";
+					client.setDefaultProbeTimeout(10000);
+					response = client.probe();
+					println "############################";
+					
+					content = "&lt;root&gt;";
+					response.each( { content += it } );
+					content += "&lt;/root&gt;";
+					
+					result = "&lt;?xml version=\"1.0\"?&gt;";
+					result += content.replaceAll(/&lt;\?xml[^\?]*\?&gt;/,'');
+
+					client.close();
+					println "############################";
+
+					</groovy>
+			</setBody>
+		</route>
+		
+		<!--  context -->
+		<route>
+			<from uri="servlet:///endpoints" />
+			<setBody>
+				<groovy>
+					response = context.getEndpoints();
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="servlet:///routes" />
+			<setBody>
+				<groovy>
+					response = context.getRoutes();
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="servlet:///properties" />
+			<setBody>
+				<groovy>
+					response = properties;
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="servlet:///languagues" />
+			<setBody>
+				<groovy>
+					response = context.getLanguageNames();
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="servlet:///components" />
+			<setBody>
+				<groovy>
+					response = context.getComponentNames();
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+	</routeContext>
+
+</beans>

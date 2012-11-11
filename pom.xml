@@ -20,6 +20,8 @@
 		<!-- plugins version -->
 		<java-version>1.6</java-version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+		<maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
+		<maven-pax-plugin.version>1.4</maven-pax-plugin.version>
 	</properties>
 	  
 	<scm>
@@ -66,7 +68,7 @@
 			<artifactId>cxf-services-ws-discovery-service</artifactId>
 			<version>${cxf-version}</version>
 		</dependency>
-		 
+		   
 		<!-- camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -142,7 +144,7 @@
 								<extraargs>
 									<extraarg>-verbose</extraarg>
 									<extraarg>-catalog</extraarg>
-									<extraarg>${basedir}/src/main/resources/jax-ws-catalog.xml</extraarg>
+									<extraarg>${basedir}/src/main/resources/wsdl/jax-ws-catalog.xml</extraarg>
 								</extraargs>
 							</defaultOptions>
 						</configuration>
@@ -153,32 +155,35 @@
 				</executions>
 			</plugin>			
 			
+			<!-- camel -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-maven-plugin</artifactId>
+				<version>${camel-version}</version>
 				<configuration>
 					<useBlueprint>true</useBlueprint>
 				</configuration>
 			</plugin>   
 
+			<!-- pax -->
 			<plugin>
 				<groupId>org.ops4j</groupId>
 				<artifactId>maven-pax-plugin</artifactId>
-				<version>1.4</version>
+				<version>${maven-pax-plugin.version}</version>
 			</plugin>
-               
+
+			<!-- bundle -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
+				<version>${maven-bundle-plugin.version}</version>
+        		<extensions>true</extensions>
 				<configuration>
-				<instructions>
-					<Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
-					<DynamicImport-Package>*</DynamicImport-Package>
-					<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
-					<Private-Package>camel.blueprint.*</Private-Package>  
-					<Import-Package>org.osgi.framework,*;resolution:=optional</Import-Package>
-				</instructions>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Description>${project.description}</Bundle-Description>
+                        <Import-Package>org.osgi.framework, org.apache.commons.logging, org.apache.camel.builder, org.apache.camel.model, javax.servlet</Import-Package>
+                    </instructions>
 				</configuration>
 			</plugin>
 		</plugins>

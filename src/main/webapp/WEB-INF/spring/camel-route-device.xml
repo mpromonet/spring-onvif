@@ -1,152 +1,27 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
 
-
 	<!-- devicemgmt.wsdl -->
-	<cxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
-		<cxf:properties>
+	<camelcxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
+		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-		</cxf:properties>    
-		<cxf:binding> 
+		</camelcxf:properties>    
+		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
-		</cxf:binding> 
-	</cxf:cxfEndpoint>
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
 
 	<routeContext id="DeviceRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<route id="Device">
 			<from uri="cxf:bean:CxfDevice" />
-			<to uri="direct:WsRouter" />
+			<to uri="direct:SoapProcessor" />
 		</route>
-		<route>
-			<from uri="seda:Device_GetCapabilities" />
-			<setBody>
-				<groovy>				
-					url = request.getHeader("CamelCxfMessage")["http.base.path"]+ "/webservices";
-				
-					capabilities =  new org.onvif.ver10.schema.Capabilities();
-					deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
-					deviceCapability.setXAddr(url+"/Device");
-					capabilities.setDevice(deviceCapability);
-					
-					eventCapability = new org.onvif.ver10.schema.EventCapabilities();
-					eventCapability.setXAddr(url+"/PullPointSubscription");
-					capabilities.setEvents(eventCapability);
-
-					mediaCapability = new org.onvif.ver10.schema.MediaCapabilities();
-					mediaCapability.setXAddr(url+"/Media");
-					capabilities.setMedia(mediaCapability);
-
-					extendCapability = new org.onvif.ver10.schema.CapabilitiesExtension();
-					replayCapability = new org.onvif.ver10.schema.ReplayCapabilities();
-					extendCapability.setReplay(replayCapability);
-					recordCapability = new org.onvif.ver10.schema.RecordingCapabilities();
-					extendCapability.setRecording(recordCapability);					
-					capabilities.setExtension(extendCapability);
-					
-					response = new org.onvif.ver10.device.wsdl.GetCapabilitiesResponse();
-					response.setCapabilities(capabilities);
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="seda:Device_GetDeviceInformation" />
-			<setBody>
-				<groovy>
-					response = new org.onvif.ver10.device.wsdl.GetDeviceInformationResponse();
-					response.setManufacturer("Manufacturer");
-					response.setModel("Model");
-					response.setFirmwareVersion("FirmwareVersion");
-					response.setSerialNumber("SerialNumber");
-					response.setHardwareId("HardwareId");
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="seda:Device_GetScopes" />
-			<setBody>
-				<groovy>
-					scope = new org.onvif.ver10.schema.Scope();
-					scope.setScopeDef(org.onvif.ver10.schema.ScopeDefinition.FIXED)
-					scope.setScopeItem("onvif://www.onvif.org/name/__NAME__")
-				
-					response = new org.onvif.ver10.device.wsdl.GetScopesResponse();
-					response.getScopes().add(scope);
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="seda:Device_GetNetworkInterfaces" />
-			<setBody>
-				<groovy>
-					linkLocal = new org.onvif.ver10.schema.PrefixedIPv4Address();
-					linkLocal.setAddress(java.net.InetAddress.getLocalHost());
-					linkLocal.setPrefixLength(24);
-					
-					ipv4Config = new org.onvif.ver10.schema.IPv4Configuration();
-					ipv4Config.setDHCP(false);
-					ipv4Config.setLinkLocal(linkLocal);
-					
-					ipv4 = new org.onvif.ver10.schema.IPv4NetworkInterface();
-					ipv4.setEnabled(true);
-					pv4.setConfig(ipv4Config);
-					
-					network = new org.onvif.ver10.schema.NetworkInterface();
-					network.setEnabled(true);
-					network.setIPv4(ipv4);
-				
-					response = new org.onvif.ver10.device.wsdl.GetNetworkInterfacesResponse();
-					response.getScopes().add(network);
-					response;
-				</groovy>
-			</setBody>
-		</route>
-		<route>
-			<from uri="seda:Device_GetDNS" />
-			<setBody>
-				<groovy>
-					dns = new org.onvif.ver10.schema.DNSInformation();
-				
-					response = new org.onvif.ver10.device.wsdl.GetDNSResponse();
-					response.setDNSInformation(dns);
-					response;
-				</groovy>
-			</setBody>
-		</route>		
-		<route>
-			<from uri="seda:Device_GetSystemDateAndTime" />
-			<setBody>
-				<groovy>
-					time = new org.onvif.ver10.schema.Time();
-					date = new org.onvif.ver10.schema.Date();
-					
-					dateTime = new org.onvif.ver10.schema.DateTime();
-					dateTime.setTime(time);
-					dateTime.setDate(date);
-				
-					tz = new org.onvif.ver10.schema.TimeZone();
-					tz.setTZ("UTC");
-					
-					systemDateTime = new org.onvif.ver10.schema.SystemDateTime ();
-					systemDateTime.setDateTimeType(org.onvif.ver10.schema.SetDateTimeType.MANUAL);
-					systemDateTime.setTimeZone(tz);
-					systemDateTime.setUTCDateTime(dateTime);
-					
-					response = new org.onvif.ver10.device.wsdl.GetSystemDateAndTimeResponse();
-					response.setSystemDateAndTime(systemDateTime);
-					response;
-				</groovy>
-			</setBody>
-		</route>				
 	</routeContext>
-
 </beans>
