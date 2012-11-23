@@ -1,6 +1,9 @@
 response = new org.onvif.ver10.events.wsdl.CreatePullPointSubscriptionResponse();
 
-endpoint = new javax.xml.ws.wsaddressing.W3CEndpointReference();					
+url = request.getHeader("CamelCxfMessage")["http.base.path"]+ "/webservices";
+
+endpoint = new org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType();					
+endpoint.setAddress(url+"/PullPointSubscription");
 response.setSubscriptionReference(endpoint);
 
 response;

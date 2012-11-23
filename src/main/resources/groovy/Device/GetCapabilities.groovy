@@ -34,8 +34,15 @@ if (properties.resolve("service.event.enabled") != "0")
 
 if (properties.resolve("service.media.enabled") != "0")
 {
+	streamingCapability = new org.onvif.ver10.schema.RealTimeStreamingCapabilities();
+	streamingCapability.setRTPMulticast(false);
+	streamingCapability.setRTPTCP(true);
+	streamingCapability.setRTPRTSPTCP(true);
+	
 	mediaCapability = new org.onvif.ver10.schema.MediaCapabilities();
 	mediaCapability.setXAddr(url+"/Media");
+	mediaCapability.setStreamingCapabilities(streamingCapability);
+	
 	capabilities.setMedia(mediaCapability);
 }
 

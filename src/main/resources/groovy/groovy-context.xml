@@ -12,7 +12,7 @@
 	<bean id="videoSourceCfg" class="org.onvif.ver10.schema.VideoSourceConfiguration" >
 		<property name="name"><value>videosrcname</value></property>
 		<property name="token"><value>videosrctoken</value></property>
-		<property name="sourceToken"><value>videotoken</value></property>
+		<property name="sourceToken"><value>videotoken1</value></property>
 		<property name="bounds"><ref bean="bounds" /></property>
 	</bean>
 	<bean id="videoResolution" class="org.onvif.ver10.schema.VideoResolution" >
