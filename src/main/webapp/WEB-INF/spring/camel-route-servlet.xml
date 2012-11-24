@@ -15,9 +15,16 @@
 	
 		<!--  hello -->
 		<route id="HelloServlet">
-			<from uri="servlet:///hello" />
+			<from uri="servlet:///infos" />
 			<setBody>
-				<constant>Hello</constant>
+				<groovy>
+					response = ""
+					response += "&lt;p&gt; name:" + context.getName() + "&lt;/p&gt;";
+					response += "&lt;p&gt; status:" + context.getStatus() + "&lt;/p&gt;";					
+					response += "&lt;p&gt; version:" +context.getVersion() + "&lt;/p&gt;";
+					response += "&lt;p&gt; uptime:" + context.getUptime() + "&lt;/p&gt;";
+					response;
+				</groovy>
 			</setBody>
 		</route>
 		
@@ -28,7 +35,7 @@
 				<groovy>
 					client = new org.apache.cxf.ws.discovery.WSDiscoveryClient();
 					println "###############servlet:///probe wsclient address:" + client.getAddress() + "#############";
-					client.setDefaultProbeTimeout(10000);
+					client.setDefaultProbeTimeout(1000);
 					response = client.probe();
 					println "############################";
 					
@@ -40,8 +47,8 @@
 					result += content.replaceAll(/&lt;\?xml[^\?]*\?&gt;/,'');
 
 					client.close();
-					println "############################";
-
+					
+					result;
 					</groovy>
 			</setBody>
 		</route>
@@ -51,7 +58,20 @@
 			<from uri="servlet:///endpoints" />
 			<setBody>
 				<groovy>
-					response = context.getEndpoints();
+					response = context.getEndpointMap();
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+		<route>
+			<from uri="servlet:///formats" />
+			<setBody>
+				<groovy>
+					response = context.getDataFormats();
 					
 					content = "";
 					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
@@ -77,7 +97,7 @@
 			<from uri="servlet:///properties" />
 			<setBody>
 				<groovy>
-					response = properties;
+					response = context.getProperties();
 					
 					content = "";
 					response.each( { content += "&lt;p&gt;";  content += it; content += "&lt;/p&gt;"; } );
