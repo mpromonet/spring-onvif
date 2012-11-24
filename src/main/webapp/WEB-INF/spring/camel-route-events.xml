@@ -12,9 +12,6 @@
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
 		</camelcxf:properties>    	
-		<camelcxf:features>
-			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
-		</camelcxf:features>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</camelcxf:binding> 
@@ -26,7 +23,7 @@
 		</camelcxf:properties>    	
 		<camelcxf:features>
 			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
-		</camelcxf:features>    	
+		</camelcxf:features> 		
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</camelcxf:binding> 
@@ -39,9 +36,26 @@
 		</route>
 	</routeContext>
 		
+	<bean id="wsaddrProp" class="org.apache.cxf.ws.addressing.impl.AddressingPropertiesImpl">
+		<constructor-arg value="http://schemas.xmlsoap.org/ws/2004/08/addressing" />
+	</bean>
+
+	<bean id="reqContext" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="javax.xml.ws.addressing.context">
+					<ref bean="wsaddrProp" />
+				</entry>
+			</map> 
+		</constructor-arg>
+	</bean>
+		
 	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
 		<route id="EventPortType">
 			<from uri="cxf:bean:CxfEventPortType" />
+			<setHeader headerName="RequestContext">
+				<simple>${ref:reqContext}</simple>
+			</setHeader>
 			<to uri="direct:SoapProcessor" />
 		</route>
 	</routeContext>

@@ -38,7 +38,7 @@
 		</property>
 	</bean>
 	
-	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="false">
+	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
 		<propertyPlaceholder id="device" location="classpath:META-INF/device.properties"/>
 		<package>onvif.camelbundle</package>
 		<jmxAgent id="agent" disabled="true"/>
@@ -85,9 +85,16 @@
 		<!--  from Cxf endpoint to groovy processor-->
 		<route>
 			<from uri="direct:SoapProcessor" />
+			<setHeader headerName="interface">
+				<groovy>exchange.getFromRouteId()</groovy>
+			</setHeader>
+			<to uri="seda:AsyncSoapProcessor" />
+		</route>
+		<route>
+			<from uri="seda:AsyncSoapProcessor" />
 			<doTry>
 				<setHeader headerName="target">
-					<groovy>"language:groovy:classpath:groovy/" + exchange.getFromRouteId() + "/" + request.getHeader("operationName") + ".groovy"</groovy>
+					<groovy>"language:groovy:classpath:groovy/" + request.getHeader("interface") + "/" + request.getHeader("operationName") + ".groovy"</groovy>
 				</setHeader>
 				<recipientList>
 					<header>target</header>
@@ -97,7 +104,7 @@
 					<to uri="log:exception?level=WARN" />
 					<setFaultBody>
 						<groovy>
-							new  java.lang.IllegalArgumentException(exchange.getFromEndpoint() .getEndpointUri() + ":" +  exchange.getFromRouteId() + "_"  + request.getHeader("operationName") + " not implemented." );
+							new  java.lang.IllegalArgumentException(exchange.getFromEndpoint() .getEndpointUri() + ":" +   request.getHeader("interface") + "/"  + request.getHeader("operationName") + " not implemented." );
 						</groovy>							
 					</setFaultBody>
 				</doCatch>
@@ -106,7 +113,7 @@
 					<to uri="log:exception?level=WARN"/>
 					<setFaultBody>
 						<groovy>
-							new  java.lang.IllegalArgumentException(exchange.getFromEndpoint() .getEndpointUri() + ":" +  exchange.getFromRouteId() + "_"  + request.getHeader("operationName") + " raised an exception" );
+							new  java.lang.IllegalArgumentException(exchange.getFromEndpoint() .getEndpointUri() + ":" +  request.getHeader("interface") + "/"  + request.getHeader("operationName") + " raised an exception" );
 						</groovy>							
 					</setFaultBody>
 				</doCatch>

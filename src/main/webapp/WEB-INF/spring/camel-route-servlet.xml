@@ -4,11 +4,13 @@
 	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xmlns:util="http://www.springframework.org/schema/util"	
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 				http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
+				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	
 	<routeContext id="ServletRoutes" xmlns="http://camel.apache.org/schema/spring">
@@ -23,6 +25,9 @@
 					response += "&lt;p&gt; status:" + context.getStatus() + "&lt;/p&gt;";					
 					response += "&lt;p&gt; version:" +context.getVersion() + "&lt;/p&gt;";
 					response += "&lt;p&gt; uptime:" + context.getUptime() + "&lt;/p&gt;";
+					response += "&lt;p&gt; application id:" + context.getApplicationContext().getId()  + "&lt;/p&gt;";
+					response += "&lt;p&gt; application context:" + context.getApplicationContext().getDisplayName()  + "&lt;/p&gt;";
+					
 					response;
 				</groovy>
 			</setBody>

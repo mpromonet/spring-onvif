@@ -3,12 +3,48 @@
 	xmlns:camel="http://camel.apache.org/schema/spring"
 	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xmlns:util="http://www.springframework.org/schema/util"	
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
+				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
+	<bean id="bounds" class="org.onvif.ver10.schema.IntRectangle">
+		<property name="X"><value>0</value></property>
+		<property name="Y"><value>0</value></property>
+		<property name="width"><value>640</value></property>
+		<property name="height"><value>480</value></property>
+	</bean>
+	<bean id="videoSourceCfg" class="org.onvif.ver10.schema.VideoSourceConfiguration" >
+		<property name="name"><value>videosrcname</value></property>
+		<property name="token"><value>videosrctoken</value></property>
+		<property name="sourceToken"><value>videotoken1</value></property>
+		<property name="bounds"><ref bean="bounds" /></property>
+	</bean>
+	<bean id="videoResolution" class="org.onvif.ver10.schema.VideoResolution" >
+		<property name="width"><value>640</value></property>
+		<property name="height"><value>480</value></property>
+	</bean>
+	<bean id="videoEncoderCfg" class="org.onvif.ver10.schema.VideoEncoderConfiguration" >
+		<property name="name"><value>encodername</value></property>
+		<property name="token"><value>encodertoken</value></property>
+		<property name="resolution"><ref bean="videoResolution" /></property>
+		<property name="encoding"><util:constant static-field="org.onvif.ver10.schema.VideoEncoding.H_264"/></property>
+	</bean>
+	<bean id="profile" class="org.onvif.ver10.schema.Profile" >
+		<property name="name"><value>profilename</value></property>
+		<property name="token"><value>profiletoken</value></property>
+		<property name="videoSourceConfiguration"><ref bean="videoSourceCfg" /></property>
+		<property name="videoEncoderConfiguration"><ref bean="videoEncoderCfg" /></property>
+	</bean>
+	<bean id="ptzCfg" class="org.onvif.ver10.schema.PTZConfiguration" >
+		<property name="name"><value>ptzname</value></property>
+		<property name="token"><value>ptztoken</value></property>
+		<property name="NodeToken"><value>nodetoken</value></property>
+	</bean>
+	
+	
 	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
