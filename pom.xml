@@ -21,10 +21,11 @@
 		<cxf-version>2.7.0</cxf-version>
 		<!-- plugins version -->
 		<java-version>1.6</java-version>
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
 		<maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
-		<maven-pax-plugin.version>1.4</maven-pax-plugin.version>
+		<maven-pax-plugin.version>1.5</maven-pax-plugin.version>
 		<maven-changelog-plugin.version>2.2</maven-changelog-plugin.version>
+		<wagon-webdav-jackrabbit.version>2.2</wagon-webdav-jackrabbit.version>
 	</properties>
 	
 	<developers>
@@ -229,7 +230,7 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-webdav-jackrabbit</artifactId>
-				<version>2.2</version>
+				<version>${wagon-webdav-jackrabbit.version}</version>
 			</extension>
 		</extensions>
 	</build>	
