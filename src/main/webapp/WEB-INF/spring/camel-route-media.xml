@@ -38,12 +38,6 @@
 		<property name="videoSourceConfiguration"><ref bean="videoSourceCfg" /></property>
 		<property name="videoEncoderConfiguration"><ref bean="videoEncoderCfg" /></property>
 	</bean>
-	<bean id="ptzCfg" class="org.onvif.ver10.schema.PTZConfiguration" >
-		<property name="name"><value>ptzname</value></property>
-		<property name="token"><value>ptztoken</value></property>
-		<property name="NodeToken"><value>nodetoken</value></property>
-	</bean>
-	
 	
 	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
 		<camelcxf:properties>
