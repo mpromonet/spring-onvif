@@ -137,6 +137,21 @@
 				</groovy>
 			</setBody>
 		</route>
+		<route>
+			<from uri="servlet:///beans" />
+			<setBody>
+				<groovy>
+					response = context.getApplicationContext().getBeanDefinitionNames();
+					
+					content = "";
+					response.each( { content += "&lt;p&gt;&lt;b&gt;";  content += it + "&lt;/b&gt;:";  content +=  context.getApplicationContext().getBean(it).getClass(); content += "&lt;/p&gt;"; } );
+					
+					content;
+				</groovy>
+			</setBody>
+		</route>
+		
+		
 	</routeContext>
 
 </beans>
