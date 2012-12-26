@@ -19,5 +19,5 @@ java.lang.reflect.Constructor[] allConstructors = pullpoint.getServiceClass().ge
 allConstructors.each( { println it.getName() } );
 
 response = new org.onvif.ver10.events.wsdl.CreatePullPointSubscriptionResponse();
-response.setSubscriptionReference(obj.getEndpointReference());
+response.setSubscriptionReference(pullpoint.getEndpointReference());
 response;
