@@ -21,12 +21,12 @@
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
 		</camelcxf:properties>    	
-		<camelcxf:features>
-			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
-		</camelcxf:features> 		
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</camelcxf:binding> 
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing" addressingRequired="true"/>
+		</camelcxf:features>	
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="PullPointSubscriptionRoutes" xmlns="http://camel.apache.org/schema/spring" >
