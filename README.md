@@ -16,7 +16,7 @@ Domain public.
 
 Links
 ------------
-Maven Site (http://mpromonet.github.com/spring-onvif)
-Maven Repository (https://github.com/mpromonet/spring-onvif/downloads)
-Jenkins CI (https://mpr.ci.cloudbees.com/job/spring-onvif)
-Application (http://spring-onvif.mpr.cloudbees.net)
+- Maven Site (http://mpromonet.github.com/spring-onvif)
+- Maven Repository (https://github.com/mpromonet/spring-onvif/downloads)
+- Jenkins CI (https://mpr.ci.cloudbees.com/job/spring-onvif)
+- Application (http://spring-onvif.mpr.cloudbees.net)
