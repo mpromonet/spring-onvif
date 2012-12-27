@@ -16,9 +16,6 @@
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
 		</camelcxf:binding> 
-		<camelcxf:features>
-			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing" addressingRequired="true"/>
-		</camelcxf:features>	
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="ReplayRoutes" xmlns="http://camel.apache.org/schema/spring">
