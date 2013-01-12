@@ -28,7 +28,7 @@
 		
 		<!-- github -->
 		<github.global.server>github</github.global.server>
-		<github.version>0.7</github.version>
+		<github.version>0.6</github.version>
 	</properties>
 	
 	<developers>
