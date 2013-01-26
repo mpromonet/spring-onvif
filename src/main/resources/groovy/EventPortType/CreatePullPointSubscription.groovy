@@ -2,22 +2,17 @@ println "======================================="  + request
 
 pullpoint = context.getApplicationContext().getBean("CxfPullPointSubscription");
 println "==============" +  pullpoint;
-println "==============" +  pullpoint.getProperties();
 println "==============" +  pullpoint.getAddress();
-println "==============" +  pullpoint.getBindingConfig();
-println "==============" +  pullpoint.getPublishedEndpointUrl();
-println "==============" +  pullpoint.getServiceClass().getName();
-println "==============" +  pullpoint.getServiceName() ;
-println "==============" +  pullpoint.getPortName() ;
-println "==============" +  pullpoint.getPublishedEndpointUrl() ;
-println "==============" +  pullpoint.getSchemaLocations() ;
+println "==============" +  pullpoint.getServiceName();
+println "==============" +  pullpoint.getWsdlURL();
 
-java.lang.reflect.Method[] allMethods = pullpoint.getServiceClass().getDeclaredMethods();
-allMethods.each( { println it.getName() } );
+def url = request.getHeader("CamelCxfMessage")["http.base.path"]+ "/webservices";
 
-java.lang.reflect.Constructor[] allConstructors = pullpoint.getServiceClass().getDeclaredConstructors();
-allConstructors.each( { println it.getName() } );
+def refbuilder = new javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder();
+refbuilder.address(url+pullpoint.getAddress());
+refbuilder.serviceName(pullpoint.getServiceName());
+refbuilder.wsdlDocumentLocation(pullpoint.getWsdlURL());
 
 response = new org.onvif.ver10.events.wsdl.CreatePullPointSubscriptionResponse();
-response.setSubscriptionReference(pullpoint.getEndpointReference());
+response.setSubscriptionReference(refbuilder.build());
 response;
