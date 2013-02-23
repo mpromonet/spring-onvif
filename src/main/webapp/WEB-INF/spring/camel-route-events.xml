@@ -13,7 +13,7 @@
 			<entry key="dataFormat" value="PAYLOAD"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
-			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
 		</camelcxf:binding> 
 		<camelcxf:features>
 			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
@@ -25,7 +25,7 @@
 			<entry key="dataFormat" value="PAYLOAD"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
-			<soap:soapBinding mtomEnabled="true" version="1.2"/> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
 		</camelcxf:binding> 
 	</camelcxf:cxfEndpoint>
 
