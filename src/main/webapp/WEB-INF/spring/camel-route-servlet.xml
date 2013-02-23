@@ -41,19 +41,21 @@
 					client = new org.apache.cxf.ws.discovery.WSDiscoveryClient();
 					println "###############servlet:///probe wsclient address:" + client.getAddress() + "#############";
 					client.setDefaultProbeTimeout(1000);
-					response = client.probe();
+					probeMatches = client.probe(new org.apache.cxf.ws.discovery.wsdl.ProbeType());
+					client.close();
 					println "############################";
 					
-					content = "&lt;root&gt;";
-					response.each( { content += it } );
-					content += "&lt;/root&gt;";
-					
-					result = "&lt;?xml version=\"1.0\"?&gt;";
-					result += content.replaceAll(/&lt;\?xml[^\?]*\?&gt;/,'');
-
-					client.close();
-					
-					result;
+					response = ""
+					def matchesList = probeMatches.getProbeMatch();
+					matchesList.each( { item -> 
+							response += "&lt;p&gt;"
+							response += "&lt;li&gt; XAddrs:" +item.getXAddrs() + "&lt;/li&gt;";
+							response += "&lt;li&gt; Scopes:" +item.getScopes().getValue() + "&lt;/li&gt;";
+							response += "&lt;li&gt; Types:" +item.getTypes() + "&lt;/li&gt;";
+							response += "&lt;/p&gt;"
+						} );
+						
+					response;
 					</groovy>
 			</setBody>
 		</route>
