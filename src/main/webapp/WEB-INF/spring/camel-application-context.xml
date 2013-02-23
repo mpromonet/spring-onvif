@@ -94,7 +94,7 @@
 			<from uri="seda:AsyncSoapProcessor" />
 			<doTry>
 				<setHeader headerName="target">
-					<groovy>"language:groovy:classpath:groovy/" + request.getHeader("interface") + "/" + request.getHeader("operationName") + ".groovy"</groovy>
+					<groovy>"language:groovy:classpath:groovy/" + request.getHeader("interface") + "/" + request.getHeader("operationName") + ".groovy?contentCache=false"</groovy>
 				</setHeader>
 				<recipientList>
 					<header>target</header>
