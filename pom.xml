@@ -67,6 +67,7 @@
 		<repository>
 			<id>internal.repo</id>
 			<url>file://${project.build.directory}/maven-repo</url>
+			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<site>
 			<id>internal.repo</id>
