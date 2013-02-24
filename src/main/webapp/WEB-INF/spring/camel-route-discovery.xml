@@ -17,9 +17,6 @@
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
 		</camelcxf:binding> 
-		<camelcxf:features>
-			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing" addressingRequired="true"/>
-		</camelcxf:features>			
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="DiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
@@ -29,4 +26,22 @@
 			<to uri="direct:SoapProcessor" />
 		</route>
 	</routeContext>
+	
+	<camelcxf:cxfEndpoint id="CxfRemoteDiscoveryPort" address="/RemoteDiscoveryPort" serviceClass="org.onvif.ver10.network.wsdl.RemoteDiscoveryPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+
+	<routeContext id="RemoteDiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- lookup -->
+		<route id="RemoteDiscovery">
+			<from uri="cxf:bean:CxfRemoteDiscoveryPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+	
 </beans>

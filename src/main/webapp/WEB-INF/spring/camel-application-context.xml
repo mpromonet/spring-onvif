@@ -45,6 +45,7 @@
 
 		<!--  remotediscovery.wsdl -->
 		<routeContextRef ref="DiscoveryRoutes" />
+		<routeContextRef ref="RemoteDiscoveryRoutes" />
 
 		<!--  devicemgmt.wsdl -->
 		<routeContextRef ref="DeviceRoutes" />
