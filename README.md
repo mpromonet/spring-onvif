@@ -7,7 +7,7 @@ ONVIF Device using Spring Framework involving :
 
 Container is a war, but should be possible to use a jar assembly or an osgi bundle.
 
-The aim is to evaluate ONVIF exchanges without developping to much code.
+The aim is to evaluate ONVIF services without developping to much code.
 
 Copyright
 ------------
@@ -16,7 +16,7 @@ Domain public.
 
 Links
 ------------
-- Packaged Application (https://github.com/mpromonet/spring-onvif/downloads)
+- Packaged Application (http://repository-mpr.forge.cloudbees.com/snapshot/spring/onvif/1.0-SNAPSHOT/)
 - Running Application (http://spring-onvif.mpr.cloudbees.net)
 - Maven Site (http://mpromonet.github.com/spring-onvif)
 - Jenkins CI (https://mpr.ci.cloudbees.com/job/spring-onvif)
