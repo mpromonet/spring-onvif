@@ -1,18 +1,28 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:camelctx="http://camel.apache.org/schema/spring"
 	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
 	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xmlns:http="http://cxf.apache.org/transports/http/configuration"
+	xmlns:camel="http://cxf.apache.org/transports/camel"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
   				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 				http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
+				http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+				http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
 
-	<import resource="classpath:META-INF/cxf/cxf.xml" />
-
-	<import resource="camel-route-servlet.xml" />
+   <http:destination name="*.http-destination">
+       <http:server SuppressClientSendErrors="true" SuppressClientReceiveErrors="true"  HonorKeepAlive="true" />
+  </http:destination>
+  <http:conduit name="*.http-conduit">
+       <http:client AllowChunking="false" />
+   </http:conduit> 
+  	<import resource="classpath:META-INF/cxf/cxf.xml" />  
+      
+ 	<import resource="camel-route-servlet.xml" />
 	
 	<import resource="camel-route-discovery.xml" />
 	<import resource="camel-route-device.xml" />
@@ -25,17 +35,28 @@
 	<import resource="camel-route-ptz.xml" />
 	<import resource="camel-route-receiver.xml" />
 
-	<cxf:bus>
-		<cxf:features>
-			<cxf:logging/>
-		</cxf:features>	
-	</cxf:bus>
-
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" /> 
 		<property name="location">
 			<value>classpath:META-INF/device.properties</value>
 		</property>
+	</bean>
+
+	<!-- CxfBus -->
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging/>
+		</cxf:features>	
+	</cxf:bus>
+	
+	<!-- Configure WS-Discovery -->
+	<bean id="discoveryService" class="org.apache.cxf.ws.discovery.internal.WSDiscoveryServiceImpl">
+		<constructor-arg index="0"><ref bean="cxf"/></constructor-arg>
+		<constructor-arg index="1">
+			<map>
+				<entry key="org.apache.cxf.service.ws-discovery.address" value="${org.apache.cxf.service.ws-discovery.address}"/>
+			</map>
+		</constructor-arg>
 	</bean>
 	
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
