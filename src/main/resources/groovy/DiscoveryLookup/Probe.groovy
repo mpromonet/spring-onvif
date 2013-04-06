@@ -1,16 +1,19 @@
 // unmarshall request
 // =================
 def soapMessage = request.getBody().getBody().get(0);
+println soapMessage
 def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.network.wsdl");
-def unmarshaller = jaxbCtx.createUnmarshaller();
-def _Probe_QNAME = new javax.xml.namespace.QName("http://www.onvif.org/ver10/network/wsdl", "Probe");
-def jaxbMessage = unmarshaller.unmarshal(soapMessage);
-def req = new javax.xml.bind.JAXBElement<org.xmlsoap.schemas.ws._2005._04.discovery.ProbeType>(_Probe_QNAME,jaxbMessage.getClass(),null,jaxbMessage.getValue());
-def probeType = req.getValue();
+def probe = jaxbCtx.createUnmarshaller().unmarshal(soapMessage).getValue();
 
-probeType.getTypes().each( { println "==> Type:" + it } );
-probeType.getScopes().each( { println "==> Scope:" + it } );
-probeType.getAny().each( { println "==> Any:" + it } );
+probe.getTypes().each( { println "==> Type:" + it } );
+probe.getScopes().each( { println "==> Scope:" + it } );
+probe.getAny().each( { println "==> Any:" + it } );
+probe.getOtherAttributes().each( { println "==> Other:" + it } );
+
+
+println "=========================";
+jaxbCtx.createMarshaller().marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("http://www.onvif.org/ver10/network/wsdl","Probe"), probe.class, probe),System.out)
+println "";
 
 // Query Discovery
 // ----------------------------
@@ -18,6 +21,7 @@ client = new org.apache.cxf.ws.discovery.WSDiscoveryClient();
 client.setDefaultProbeTimeout(1000);
 
 probeType = new org.apache.cxf.ws.discovery.wsdl.ProbeType();
+probe.getTypes().each( {probeType.getTypes().add(it); })
 def probeMatches = client.probe(probeType);
 client.close();
 
@@ -34,18 +38,29 @@ matchesList.each( { item ->
 
 // Build Response
 // ----------------------------
-response = new org.xmlsoap.schemas.ws._2005._04.discovery.ProbeMatchesType()
+rep = new org.xmlsoap.schemas.ws._2005._04.discovery.ProbeMatchesType()
 
 matchesList.each( { item ->  
 		responseItem = new org.xmlsoap.schemas.ws._2005._04.discovery.ProbeMatchType() ; 
 		item.getXAddrs().each ( { responseItem.getXAddrs().add(it); } );
-		response.getProbeMatch().add(responseItem); 
+		def endpoint = new org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType();
+		def address = new org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI();
+		address.setValue("toto");
+		endpoint.setAddress(address);
+		responseItem.setEndpointReference(endpoint);
+		rep.getProbeMatch().add(responseItem); 
 	} );
 
-response.getProbeMatch().each( { item -> 
+// Print Response
+// ----------------------------
+rep.getProbeMatch().each( { item -> 
 		println "XAddrs:" +item.getXAddrs(); 
-		println "Endpoints:" + item.getEndpointReference() 
+		println "Endpoints:" + item.getEndpointReference().getAddress().getValue();
 	} );
 
+println "=========================";
+jaxbCtx.createMarshaller().marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("http://www.onvif.org/ver10/network/wsdl","ProbeResponse"), rep.class, rep),System.out)
+println "";
 
-response;
+println rep	
+rep
