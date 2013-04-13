@@ -1,0 +1,47 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xmlns:util="http://www.springframework.org/schema/util"	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
+				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<camelcxf:cxfEndpoint id="CxfDiscoveryLookupPort" address="/DiscoveryLookupPort" serviceClass="org.onvif.ver10.network.wsdl.DiscoveryLookupPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+
+	<routeContext id="DiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- lookup -->
+		<route id="DiscoveryLookup">
+			<from uri="cxf:bean:CxfDiscoveryLookupPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+	
+	<camelcxf:cxfEndpoint id="CxfRemoteDiscoveryPort" address="/RemoteDiscoveryPort" serviceClass="org.onvif.ver10.network.wsdl.RemoteDiscoveryPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+
+	<routeContext id="RemoteDiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<!-- lookup -->
+		<route id="RemoteDiscovery">
+			<from uri="cxf:bean:CxfRemoteDiscoveryPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+	
+</beans>
