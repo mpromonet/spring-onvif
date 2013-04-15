@@ -10,19 +10,13 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
 				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<util:list id="scopeList" value-type="java.lang.String">
-		<value>onvif://www.onvif.org/name/${deviceid.name}</value>
-		<value>onvif://www.onvif.org/type/Network_Video_Transmitter</value>
-		<value>onvif://www.onvif.org/type/Streaming</value>
-	</util:list>
-
 	<!-- devicemgmt.wsdl -->
-	<camelcxf:cxfEndpoint id="CxfDevice" address="/Device" serviceClass="org.onvif.ver10.device.wsdl.Device">
+	<camelcxf:cxfEndpoint id="CxfDevice" address="${device.ws-discovery.address}" serviceClass="org.onvif.ver10.device.wsdl.Device">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
 			<entry key="ws-discovery-uuid" value="DEVICE"/>
 			<entry key="ws-discovery-types" value="${device.ws-discovery.type}"/>
-			<entry key="ws-discovery-scopes"><ref bean="scopeList"/></entry>						
+			<entry key="ws-discovery-scopes"  value="${device.ws-discovery.scopes}"/>				
 		</camelcxf:properties>    
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="true" version="${soap.binding}"/> 
