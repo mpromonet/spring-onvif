@@ -20,7 +20,6 @@
 	<camelcxf:cxfEndpoint id="CxfDevice" address="/device_service" serviceClass="org.onvif.ver10.device.wsdl.Device" >
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
-			<entry key="ws-discovery-uuid" value="DEVICE"/>
 			<entry key="ws-discovery-types" value="${device.ws-discovery.type}"/>
 			<entry key="ws-discovery-scopes"  value="${device.ws-discovery.scopes}"/>				
 			<entry key="publishedEndpointUrl" ><ref bean="publishedWebServiceUrl" /></entry>				
