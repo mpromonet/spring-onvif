@@ -222,39 +222,7 @@
 					</execution>
 				</executions>
 			</plugin>			
-			
-			<!-- camel -->
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<version>${camel-version}</version>
-				<configuration>
-					<useBlueprint>true</useBlueprint>
-				</configuration>
-			</plugin>   
-
-			<!-- pax -->
-			<plugin>
-				<groupId>org.ops4j</groupId>
-				<artifactId>maven-pax-plugin</artifactId>
-				<version>${maven-pax-plugin.version}</version>
-			</plugin>
-
-			<!-- bundle -->
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${maven-bundle-plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Description>${project.description}</Bundle-Description>
-						<Import-Package>org.osgi.framework, org.apache.commons.logging, org.apache.camel.builder, org.apache.camel.model, javax.servlet</Import-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-			
+						
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>downloads-maven-plugin</artifactId>
