@@ -17,7 +17,7 @@ def extendCapability = new org.onvif.ver10.schema.CapabilitiesExtension();
 
 
 def deviceCapability = new org.onvif.ver10.schema.DeviceCapabilities();
-deviceCapability.setXAddr(url+"/Device");
+deviceCapability.setXAddr(url+properties.resolve("device.address"));
 
 def onvifversion = new org.onvif.ver10.schema.OnvifVersion();
 onvifversion.setMajor(properties.resolve("onvif.major").toInteger() );

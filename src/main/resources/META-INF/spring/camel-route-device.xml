@@ -13,11 +13,11 @@
 	<bean id="localhost" class="java.net.InetAddress" factory-method="getLocalHost" />
 	
 	<bean id="publishedWebServiceUrl" class="java.lang.String">
-		<constructor-arg value="#{'http://' + localhost.hostAddress + ':8080/onvif/webservices/device_service'}" />
+		<constructor-arg value="#{'http://' + localhost.hostAddress + ':8080' + servletContext.contextPath + '/webservices' + @applicationProperties.getProperty('device.address') }" />
 	</bean> 
      
 	<!-- devicemgmt.wsdl -->
-	<camelcxf:cxfEndpoint id="CxfDevice" address="/device_service" serviceClass="org.onvif.ver10.device.wsdl.Device" >
+	<camelcxf:cxfEndpoint id="CxfDevice" address="${device.address}" serviceClass="org.onvif.ver10.device.wsdl.Device" >
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
 			<entry key="ws-discovery-types" value="${device.ws-discovery.type}"/>

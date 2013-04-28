@@ -16,7 +16,7 @@ def rep = new org.onvif.ver10.device.wsdl.GetServicesResponse();
 
 def service = new org.onvif.ver10.device.wsdl.Service();
 service.setNamespace("http://www.onvif.org/ver10/device/wsdl");
-service.setXAddr(url+"/Device");
+service.setXAddr(url+properties.resolve("device.address"));
 service.setVersion(onvifversion);
 rep.getService().add(service);
 

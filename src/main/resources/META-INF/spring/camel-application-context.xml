@@ -29,13 +29,23 @@
 	<import resource="camel-route-ptz.xml" />
 	<import resource="camel-route-receiver.xml" />
 
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<!-- -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" /> 
 		<property name="location">
 			<value>classpath:META-INF/device.properties</value>
 		</property>
 	</bean>
 
+	<bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="singleton" value="true" />
+		<property name="properties">
+			<props>
+				<prop key="device.address">${device.address}</prop>
+			</props>
+		</property>
+	</bean>
+	
 	<!-- CxfBus -->
 	<cxf:bus>
 		<cxf:features>
