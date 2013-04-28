@@ -24,10 +24,31 @@
 					response += "&lt;p&gt; name:" + context.getName() + "&lt;/p&gt;";
 					response += "&lt;p&gt; status:" + context.getStatus() + "&lt;/p&gt;";					
 					response += "&lt;p&gt; version:" +context.getVersion() + "&lt;/p&gt;";
-					response += "&lt;p&gt; uptime:" + context.getUptime() + "&lt;/p&gt;";
-					response += "&lt;p&gt; application id:" + context.getApplicationContext().getId()  + "&lt;/p&gt;";
-					response += "&lt;p&gt; application context:" + context.getApplicationContext().getDisplayName()  + "&lt;/p&gt;";
+					response += "&lt;p&gt; uptime:" + context.getUptime() + "&lt;/p&gt;";					
 					
+					response += "&lt;p&gt; application id:" + context.getApplicationContext().getId()  + "&lt;/p&gt;";
+					response += "&lt;p&gt; application class:" + context.getApplicationContext().getClass()  + "&lt;/p&gt;";
+					response += "&lt;p&gt; application context name:" + context.getApplicationContext().getDisplayName()  + "&lt;/p&gt;";
+					
+					response += "&lt;p&gt; servlet config.serverInfo :" + context.getApplicationContext().getServletContext().getServerInfo()  + "&lt;/p&gt;";
+					response += "&lt;p&gt; servlet config.servletcontextname :" + context.getApplicationContext().getServletContext().getServletContextName()  + "&lt;/p&gt;";
+					response += "&lt;p&gt; servlet config.realpath :" + context.getApplicationContext().getServletContext().getRealPath("/")  + "&lt;/p&gt;";
+					response += "&lt;p&gt; servlet config.contextpath :" + context.getApplicationContext().getServletContext().getContextPath()  + "&lt;/p&gt;";
+					
+					response += "&lt;p&gt; servlet config.servletNames :&lt;/p&gt;" ;
+					context.getApplicationContext().getServletContext().getServletNames().each( { response += it + "&lt;br/&gt;" });
+
+					response += "&lt;p&gt; servlet config.servlets :&lt;/p&gt;" ;
+					context.getApplicationContext().getServletContext().getServlets().each(  { response += it + "&lt;br/&gt;" });
+
+					response += "&lt;p&gt; servlet config.atributes :&lt;/p&gt;" ;
+					context.getApplicationContext().getServletContext().getAttributeNames().each(  { response += it + "=" +  context.getApplicationContext().getServletContext().getAttribute(it) + "&lt;br/&gt;" });
+
+					response += "&lt;p&gt; servlet config.init param :&lt;/p&gt;" ;
+					context.getApplicationContext().getServletContext().getInitParameterNames().each(  { response += it + "=" +  context.getApplicationContext().getServletContext().getInitParameter(it)  + "&lt;br/&gt;" });
+
+					
+
 					response;
 				</groovy>
 			</setBody>
