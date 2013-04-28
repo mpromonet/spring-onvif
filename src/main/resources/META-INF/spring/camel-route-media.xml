@@ -32,11 +32,21 @@
 		<property name="resolution"><ref bean="videoResolution" /></property>
 		<property name="encoding"><util:constant static-field="org.onvif.ver10.schema.VideoEncoding.H_264"/></property>
 	</bean>
+	<bean id="ptzCfg" class="org.onvif.ver10.schema.PTZConfiguration" >
+		<property name="name"><value>ptzname</value></property>
+		<property name="token"><value>ptztoken</value></property>
+	</bean>
+	<bean id="metadataCfg" class="org.onvif.ver10.schema.MetadataConfiguration" >
+		<property name="name"><value>metaname</value></property>
+		<property name="token"><value>metatoken</value></property>
+	</bean>
 	<bean id="profile" class="org.onvif.ver10.schema.Profile" >
 		<property name="name"><value>profilename</value></property>
 		<property name="token"><value>profiletoken</value></property>
 		<property name="videoSourceConfiguration"><ref bean="videoSourceCfg" /></property>
 		<property name="videoEncoderConfiguration"><ref bean="videoEncoderCfg" /></property>
+		<!--property name="ptzConfiguration"><ref bean="ptzCfg" /></property-->
+		<property name="metadataConfiguration"><ref bean="metadataCfg" /></property>
 	</bean>
 	
 	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
