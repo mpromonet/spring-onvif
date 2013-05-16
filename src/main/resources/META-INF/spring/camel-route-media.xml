@@ -35,6 +35,7 @@
 	<bean id="ptzCfg" class="org.onvif.ver10.schema.PTZConfiguration" >
 		<property name="name"><value>ptzname</value></property>
 		<property name="token"><value>ptztoken</value></property>
+		<property name="nodeToken"><value>nodeToken</value></property>
 	</bean>
 	<bean id="metadataCfg" class="org.onvif.ver10.schema.MetadataConfiguration" >
 		<property name="name"><value>metaname</value></property>
@@ -45,7 +46,7 @@
 		<property name="token"><value>profiletoken</value></property>
 		<property name="videoSourceConfiguration"><ref bean="videoSourceCfg" /></property>
 		<property name="videoEncoderConfiguration"><ref bean="videoEncoderCfg" /></property>
-		<!--property name="ptzConfiguration"><ref bean="ptzCfg" /></property-->
+		<property name="PTZConfiguration"><ref bean="ptzCfg" /></property>
 		<property name="metadataConfiguration"><ref bean="metadataCfg" /></property>
 	</bean>
 	
