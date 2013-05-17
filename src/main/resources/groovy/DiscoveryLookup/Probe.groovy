@@ -32,7 +32,8 @@ matchesList.each( { item ->
 		println "XAddrs:" +item.getXAddrs(); 
 		println "Scopes:" + item.getScopes().getValue(); 
 		println "Types:" + item.getTypes(); 
-		println "Endpoints:(" + item.getEndpointReference().getClass() + ")" + item.getEndpointReference()
+		println "Endpoints:" + item.getEndpointReference()
+		println "MetadataVersion:" + item.getMetadataVersion()
 	} );
 
 // Build Response
@@ -42,14 +43,16 @@ rep = new org.xmlsoap.schemas.ws._2005._04.discovery.ProbeMatchesType()
 matchesList.each( { item ->  
 		responseItem = new org.xmlsoap.schemas.ws._2005._04.discovery.ProbeMatchType() ; 
 		item.getXAddrs().each ( { responseItem.getXAddrs().add(it); } );
+		item.getTypes().each ( { responseItem.getTypes().add(it); } );
 		def endpoint = new org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType();
 		def address = new org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI();
-		address.setValue("toto");
+		address.setValue(item.getEndpointReference().address.uri);
 		endpoint.setAddress(address);
 		responseItem.setEndpointReference(endpoint);
 		def scope = new org.xmlsoap.schemas.ws._2005._04.discovery.ScopesType();
 		item.getScopes().getValue().each ( { scope.getValue().add(it); } );		
 		responseItem.setScopes(scope);
+		responseItem.setMetadataVersion(item.getMetadataVersion());
 		rep.getProbeMatch().add(responseItem); 
 	} );
 
@@ -59,7 +62,9 @@ rep.getProbeMatch().each( { item ->
 		println "=========================";
 		println "XAddrs:" +item.getXAddrs(); 
 		println "Scopes:" + item.getScopes().getValue();
+		println "Types:" + item.getTypes(); 
 		println "Endpoints:" + item.getEndpointReference().getAddress().getValue();
+		println "MetadataVersion:" + item.getMetadataVersion()
 	} );
 
 def result = new java.io.StringWriter();
