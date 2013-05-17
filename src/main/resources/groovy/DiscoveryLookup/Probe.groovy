@@ -1,7 +1,10 @@
+// SOAP headers
+// =================
+request.getBody().getHeaders().each( { println "==> SOAP Header: {" + it.getObject().getNamespaceURI()+ "}:"+ it.getObject().getLocalName()  + "=" + it.getObject().getTextContent() } );
+
 // unmarshall request
 // =================
 def soapMessage = request.getBody().getBody().get(0);
-println soapMessage
 def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.network.wsdl");
 def probe = jaxbCtx.createUnmarshaller().unmarshal(soapMessage).getValue();
 
@@ -10,10 +13,6 @@ probe.getScopes().each( { println "==> Scope:" + it } );
 probe.getAny().each( { println "==> Any:" + it } );
 probe.getOtherAttributes().each( { println "==> Other:" + it } );
 
-
-println "=========================";
-jaxbCtx.createMarshaller().marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("http://www.onvif.org/ver10/network/wsdl","Probe"), probe.class, probe),System.out)
-println "";
 
 // Query Discovery
 // ----------------------------
@@ -33,7 +32,7 @@ matchesList.each( { item ->
 		println "XAddrs:" +item.getXAddrs(); 
 		println "Scopes:" + item.getScopes().getValue(); 
 		println "Types:" + item.getTypes(); 
-		println "Endpoints:" + item.getEndpointReference() 
+		println "Endpoints:(" + item.getEndpointReference().getClass() + ")" + item.getEndpointReference()
 	} );
 
 // Build Response
@@ -48,19 +47,25 @@ matchesList.each( { item ->
 		address.setValue("toto");
 		endpoint.setAddress(address);
 		responseItem.setEndpointReference(endpoint);
+		def scope = new org.xmlsoap.schemas.ws._2005._04.discovery.ScopesType();
+		item.getScopes().getValue().each ( { scope.getValue().add(it); } );		
+		responseItem.setScopes(scope);
 		rep.getProbeMatch().add(responseItem); 
 	} );
 
 // Print Response
 // ----------------------------
 rep.getProbeMatch().each( { item -> 
+		println "=========================";
 		println "XAddrs:" +item.getXAddrs(); 
+		println "Scopes:" + item.getScopes().getValue();
 		println "Endpoints:" + item.getEndpointReference().getAddress().getValue();
 	} );
 
+def result = new java.io.StringWriter();
+def marshaller = jaxbCtx.createMarshaller();
+marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, true);
+marshaller.marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("http://www.onvif.org/ver10/network/wsdl","ProbeResponse"), rep.class, rep),result)
 println "=========================";
-jaxbCtx.createMarshaller().marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("http://www.onvif.org/ver10/network/wsdl","ProbeResponse"), rep.class, rep),System.out)
-println "";
 
-println rep	
-rep
+result.toString();
