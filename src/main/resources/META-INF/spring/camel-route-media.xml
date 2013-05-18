@@ -16,6 +16,22 @@
 		<property name="width"><value>640</value></property>
 		<property name="height"><value>480</value></property>
 	</bean>
+	<bean id="imageSettings" class="org.onvif.ver10.schema.ImagingSettings">
+		<property name="brightness"><value>0.5</value></property>
+		<property name="colorSaturation"><value>0.5</value></property>
+		<property name="contrast"><value>0.5</value></property>
+		<property name="sharpness"><value>0.5</value></property>
+	</bean>	
+	<bean id="videoSource1" class="org.onvif.ver10.schema.VideoSource" >
+		<property name="token"><value>videotoken1</value></property>
+		<property name="resolution"><ref bean="videoResolution" /></property>
+		<property name="imaging"><ref bean="imageSettings" /></property>
+	</bean>			
+	<bean id="videoSource2" class="org.onvif.ver10.schema.VideoSource" >
+		<property name="token"><value>videotoken2</value></property>
+		<property name="resolution"><ref bean="videoResolution" /></property>
+		<property name="imaging"><ref bean="imageSettings" /></property>
+	</bean>			
 	<bean id="videoSourceCfg" class="org.onvif.ver10.schema.VideoSourceConfiguration" >
 		<property name="name"><value>videosrcname</value></property>
 		<property name="token"><value>videosrctoken</value></property>
