@@ -8,9 +8,11 @@ println "==> " + req.getProfileToken()
 
 response = new org.onvif.ver10.media.wsdl.GetProfileResponse();
 
-if (req.getProfileToken() == "profile")
+def template = context.createProducerTemplate();
+def profile=template.requestBody("direct:getProfile",null);
+
+if (req.getProfileToken() == profile.getToken())
 {
-	def profile =  context.getApplicationContext().getBean('profile');
 	response.setProfile(profile);
 }
 

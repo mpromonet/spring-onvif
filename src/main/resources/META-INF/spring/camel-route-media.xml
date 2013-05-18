@@ -80,5 +80,11 @@
 			<from uri="cxf:bean:CxfMedia" />
 			<to uri="direct:SoapProcessor" />
 		</route>		
+
+		<route>
+			<from uri="direct:getProfile" />
+			<setBody><simple>${ref:profile}</simple></setBody>
+			<to uri="mock:getProfile" />
+		</route>		
 	</routeContext>
 </beans>
