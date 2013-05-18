@@ -1,18 +1,27 @@
 Spring-ONVIF
---------------------
-ONVIF Device using Spring Framework involving :
-- Apache CXF to manager WS endpoints
-- Apache Camel to dispach SOAP request
+========
+The aim is to try to implement ONVIF services in a flexible way and to learn a bit more about what could do Apache Camel.
+This should probably never run inside a camera, but it could be use to test ONVIF client.
+
+The application is based on Spring Framework and use :
+- Apache CXF to manage WS endpoints
+- Apache Camel to route the SOAP request
 - Groovy to process SOAP request and produce SOAP response
 
-Container is a war, but should be possible to use a jar assembly or an osgi bundle.
+The application instantiate an ONVIF Device Service and publish it using the WS-Discovery of Apache CXF.
+Apache Camel is used to dispatch each ONVIF method to a groovy script located in groovy/<serviceName>/<methodName>.grrovy.
+Then adding support for a new method just need to add a new script. Modifying behaviour of a method could be done modifying the script without restart the application. 
 
-The aim is to evaluate ONVIF services without developping to much code.
+Container is a war, but it should be possible to use a jar assembly or an osgi bundle.
+
+Build
+--------
+`mvn package` build the web application.
+`mvn` build and run the web application in embedded tomcat.
 
 Copyright
 ------------
 Domain public.
-
 
 Links
 ------------
