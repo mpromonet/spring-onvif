@@ -25,7 +25,7 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="PTZRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route id="PTZ">
+		<route id="PTZ" autoStartup="{{service.ptz.enabled}}">
 			<from uri="cxf:bean:CxfPTZ" />
 			<to uri="direct:SoapProcessor" />
 		</route>

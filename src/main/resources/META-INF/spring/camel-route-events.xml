@@ -30,14 +30,14 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="PullPointSubscriptionRoutes" xmlns="http://camel.apache.org/schema/spring" >
-		<route id="PullPointSubscription">
+		<route id="PullPointSubscription" autoStartup="{{service.event.enabled}}">
 			<from uri="cxf:bean:CxfPullPointSubscription" />
 			<to uri="direct:SoapProcessor" />
 		</route>
 	</routeContext>
 				
 	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
-		<route id="EventPortType">
+		<route id="EventPortType" autoStartup="{{service.event.enabled}}">
 			<from uri="cxf:bean:CxfEventPortType" />
 			<to uri="direct:SoapProcessor" />
 		</route>

@@ -19,7 +19,7 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="ImagingRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route id="Imaging">
+		<route id="Imaging" autoStartup="{{service.imaging.enabled}}">
 			<from uri="cxf:bean:CxfImagingPort" />
 			<to uri="direct:SoapProcessor" />
 		</route>

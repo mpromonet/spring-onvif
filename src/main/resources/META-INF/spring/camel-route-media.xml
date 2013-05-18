@@ -60,8 +60,7 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="MediaRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<!-- send soap message to dispatcher -->
-		<route id="Media">
+		<route id="Media" autoStartup="{{service.media.enabled}}">
 			<from uri="cxf:bean:CxfMedia" />
 			<to uri="direct:SoapProcessor" />
 		</route>		

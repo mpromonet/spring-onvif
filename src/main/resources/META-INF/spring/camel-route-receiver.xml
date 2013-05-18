@@ -19,7 +19,7 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="ReceiverRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route id="Receiver">
+		<route id="Receiver" autoStartup="{{service.receiver.enabled}}">
 			<from uri="cxf:bean:CxfReceiver" />
 			<to uri="direct:SoapProcessor" />
 		</route>

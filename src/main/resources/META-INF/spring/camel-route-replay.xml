@@ -19,7 +19,7 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="ReplayRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route id="Replay">
+		<route id="Replay" autoStartup="{{service.replay.enabled}}">
 			<from uri="cxf:bean:CxfReplay" />
 			<to uri="direct:SoapProcessor" />
 		</route>

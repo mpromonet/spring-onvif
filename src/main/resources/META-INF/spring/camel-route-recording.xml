@@ -19,7 +19,7 @@
 	</camelcxf:cxfEndpoint>
 
 	<routeContext id="RecordingRoutes" xmlns="http://camel.apache.org/schema/spring">
-		<route id="RecordingPort">
+		<route id="RecordingPort" autoStartup="{{service.recording.enabled}}">
 			<from uri="cxf:bean:CxfRecordingPort" />
 			<to uri="direct:SoapProcessor" />
 		</route>
