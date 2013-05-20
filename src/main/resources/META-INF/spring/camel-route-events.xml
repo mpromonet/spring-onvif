@@ -15,6 +15,9 @@
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
 		</camelcxf:binding> 
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+		</camelcxf:features>	
 	</camelcxf:cxfEndpoint>
 
 	<camelcxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
