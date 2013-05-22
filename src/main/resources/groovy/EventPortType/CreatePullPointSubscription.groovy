@@ -1,17 +1,21 @@
-println "======================================="  + request
+// SOAP headers
+// =================
+request.getBody().getHeaders().each( { println "==> SOAP Header: {" + it.getObject().getNamespaceURI()+ "}:"+ it.getObject().getLocalName()  + "=" + it.getObject().getTextContent() } );
 
 pullpoint = context.getApplicationContext().getBean("CxfPullPointSubscription");
-println "==============" +  pullpoint;
-println "==============" +  pullpoint.getAddress();
-println "==============" +  pullpoint.getServiceName();
-println "==============" +  pullpoint.getWsdlURL();
-
 def url = request.getHeader("CamelCxfMessage")["http.base.path"]+ "/webservices";
+
+def s = "<SubscriptionId>"+request.getHeader("CamelCxfMessage")+"</SubscriptionId>";
+def stringbuffer = new java.io.StringBufferInputStream(s);
+def docbuiler = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+def db = docbuiler.newDocumentBuilder();
+def doc = db.parse(stringbuffer);
 
 def refbuilder = new javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder();
 refbuilder.address(url+pullpoint.getAddress());
 refbuilder.serviceName(pullpoint.getServiceName());
 refbuilder.wsdlDocumentLocation(pullpoint.getWsdlURL());
+refbuilder.referenceParameter(doc.getDocumentElement());
 
 def currentdate = new java.util.GregorianCalendar();
 def currentXmlDate = javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar(currentdate.get(java.util.Calendar.YEAR),
