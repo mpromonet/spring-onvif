@@ -343,6 +343,31 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:input message="tev:SetSynchronizationPointRequest" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SetSynchronizationPointRequest"/>
 			<wsdl:output message="tev:SetSynchronizationPointResponse" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SetSynchronizationPointResponse"/>
 		</wsdl:operation>
+		
+		
+      <wsdl:operation name="Renew">
+         <wsdl:input  name="RenewRequest" 
+                      message="wsntw:RenewRequest" />
+         <wsdl:output name="RenewResponse" 
+                      message="wsntw:RenewResponse" />
+         <wsdl:fault  name="ResourceUnknownFault" 
+                      message="wsrf-rw:ResourceUnknownFault" />
+         <wsdl:fault  name="UnacceptableTerminationTimeFault" 
+                      message=
+                      "wsntw:UnacceptableTerminationTimeFault" />     
+      </wsdl:operation>
+      <wsdl:operation name="Unsubscribe">
+         <wsdl:input  name="UnsubscribeRequest" 
+                      message="wsntw:UnsubscribeRequest" />
+         <wsdl:output name="UnsubscribeResponse" 
+                      message="wsntw:UnsubscribeResponse" />
+         <wsdl:fault  name="ResourceUnknownFault" 
+                      message="wsrf-rw:ResourceUnknownFault" />
+         <wsdl:fault  name="UnableToDestroySubscriptionFault" 
+                      message=
+                      "wsntw:UnableToDestroySubscriptionFault" />     
+      </wsdl:operation>
+		
 	</wsdl:portType>
 	<wsdl:binding name="PullPointSubscriptionBinding" type="tev:PullPointSubscription">
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
