@@ -10,8 +10,8 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" targetNamespace="http://www.onvif.org/ver10/device/wsdl">
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" elementFormDefault="qualified" version="2.2">
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
+		<xs:schema targetNamespace="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" elementFormDefault="qualified" version="2.2.1">
+			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../../../ver10/schema/onvif.xsd"/>
 			<!--===============================-->
 			<xs:element name="GetServices">
 				<xs:complexType>
@@ -45,7 +45,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					</xs:element>
 					<xs:element name="XAddr" type="xs:anyURI">
 						<xs:annotation>
-							<xs:documentation>The transport addresses where the service can be reached. The schema and IP part shall match the one used in the request (i.e. the GetServices request).</xs:documentation>
+							<xs:documentation>The transport addresses where the service can be reached. The scheme and IP part shall match the one used in the request (i.e. the GetServices request).</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Capabilities" minOccurs="0">
@@ -138,6 +138,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 						<xs:documentation>Indicates support for IEEE 802.11 configuration.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
+				<xs:attribute name="Dot1XConfigurations" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Indicates the maximum number of Dot1X configurations supported by the device</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
 				<xs:attribute name="HostnameFromDHCP" type="xs:boolean">
 					<xs:annotation>
 						<xs:documentation>Indicates support for retrieval of hostname from DHCP.</xs:documentation>
@@ -146,6 +151,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				<xs:attribute name="NTP" type="xs:int">
 					<xs:annotation>
 						<xs:documentation>Maximum number of NTP servers supported by the devices SetNTP command.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="DHCPv6" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Indicates support for Stateful IPv6 DHCP.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
