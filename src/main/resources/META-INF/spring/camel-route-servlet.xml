@@ -173,8 +173,41 @@
 				</groovy>
 			</setBody>
 		</route>
-		
-		
+		<route>
+			<from uri="servlet:///db" />
+			<setBody>
+				<simple>${header.sql}</simple>
+			</setBody>			
+			<to uri="jdbc:dataSource" />
+		</route>
+		<route>
+			<from uri="servlet:///users" />
+			<setBody>
+				<constant>create table if not exists USERS(id varchar primary key not null, msg varchar)</constant>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     
+			
+			<setBody><simple>${ref:AdminUser}</simple></setBody>
+			<setBody>
+				<groovy>
+					def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
+					def result = new java.io.StringWriter();
+					def marshaller = jaxbCtx.createMarshaller();
+					marshaller.marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("org.onvif.ver10.schema","User"), request.getBody().class, request.getBody()),result);
+					result;
+				</groovy>
+			</setBody>
+			<setBody>
+				<simple>insert into USERS values('admin','${body}')</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     
+			
+
+			<setBody>
+				<constant>select * from USERS</constant>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     
+		</route>		
 	</routeContext>
 
 </beans>

@@ -10,17 +10,27 @@
 				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
 				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean id="localhost" class="java.net.InetAddress" factory-method="getLocalHost" />
-	
-	<bean id="publishedWebServiceUrl" class="java.lang.String">
-		<constructor-arg value="#{'http://' + localhost.hostAddress + ':8080' + servletContext.contextPath + '/webservices' + @applicationProperties.getProperty('device.address') }" />
-	</bean> 
-     
 	<bean id="AdminUser" class="org.onvif.ver10.schema.User">
 		<property name="username"><value>admin</value></property>
 		<property name="userLevel"><util:constant static-field="org.onvif.ver10.schema.UserLevel.ADMINISTRATOR"/></property>
 	</bean>
-     
+
+	<!-- build wsdlurl -->
+	<bean id="localhost" class="java.net.InetAddress" factory-method="getLocalHost" />
+	
+	<bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="singleton" value="true" />
+		<property name="properties">
+			<props>
+				<prop key="device.address">${device.address}</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="publishedWebServiceUrl" class="java.lang.String">
+		<constructor-arg value="#{'http://' + localhost.hostAddress + ':8080' + servletContext.contextPath + '/webservices' + @applicationProperties.getProperty('device.address') }" />
+	</bean> 
+          
 	<!-- devicemgmt.wsdl -->
 	<camelcxf:cxfEndpoint id="CxfDevice" address="${device.address}" serviceClass="org.onvif.ver10.device.wsdl.Device" >
 		<camelcxf:properties>
