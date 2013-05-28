@@ -1,0 +1,263 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:camelcxf="http://camel.apache.org/schema/cxf"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+				http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+				http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
+
+	<!-- Core -->
+	<!-- devicemgmt.wsdl -->
+	<bean id="localhost" class="java.net.InetAddress" factory-method="getLocalHost" />
+	
+	<bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="singleton" value="true" />
+		<property name="properties">
+			<props>
+				<prop key="device.address">${device.address}</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="publishedWebServiceUrl" class="java.lang.String">
+		<constructor-arg value="#{'http://' + localhost.hostAddress + ':8080' + servletContext.contextPath + '/webservices' + @applicationProperties.getProperty('device.address') }" />
+	</bean> 	
+	<camelcxf:cxfEndpoint id="CxfDevice" address="${device.address}" serviceClass="org.onvif.ver10.device.wsdl.Device" >
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-types" value="${device.ws-discovery.type}"/>
+			<entry key="ws-discovery-scopes"  value="${device.ws-discovery.scopes}"/>				
+			<entry key="publishedEndpointUrl" ><ref bean="publishedWebServiceUrl" /></entry>				
+		</camelcxf:properties>    
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="true" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+
+	<routeContext id="DeviceRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Device">
+			<from uri="cxf:bean:CxfDevice" />
+			<to uri="direct:SoapProcessor" />
+		</route>		
+	</routeContext>	
+	
+	<!-- events.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+		</camelcxf:features>	
+	</camelcxf:cxfEndpoint>
+	<routeContext id="PullPointSubscriptionRoutes" xmlns="http://camel.apache.org/schema/spring" >
+		<route id="PullPointSubscription" autoStartup="{{service.event.enabled}}">
+			<from uri="cxf:bean:CxfPullPointSubscription" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+
+	<camelcxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+		</camelcxf:features>	
+	</camelcxf:cxfEndpoint>
+	<routeContext id="EventRoutes" xmlns="http://camel.apache.org/schema/spring" >
+		<route id="EventPortType" autoStartup="{{service.event.enabled}}">
+			<from uri="cxf:bean:CxfEventPortType" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+	
+	<!-- remotediscovery.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfDiscoveryLookupPort" address="/DiscoveryLookupPort" serviceClass="org.onvif.ver10.network.wsdl.DiscoveryLookupPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="DiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="DiscoveryLookup">
+			<from uri="cxf:bean:CxfDiscoveryLookupPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+	
+	<camelcxf:cxfEndpoint id="CxfRemoteDiscoveryPort" address="/RemoteDiscoveryPort" serviceClass="org.onvif.ver10.network.wsdl.RemoteDiscoveryPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="RemoteDiscoveryRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="RemoteDiscovery">
+			<from uri="cxf:bean:CxfRemoteDiscoveryPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+	
+	<!-- deviceio.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfDeviceIOPort" address="/DeviceIO" serviceClass="org.onvif.ver10.deviceio.wsdl.DeviceIOPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="DeviceIORoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="DeviceIOPort" autoStartup="{{service.deviceio.enabled}}">
+			<from uri="cxf:bean:CxfDeviceIOPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>
+
+	<!-- NVT -->	
+	<!-- media.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    		
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="MediaRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Media" autoStartup="{{service.media.enabled}}">
+			<from uri="cxf:bean:CxfMedia" />
+			<to uri="direct:SoapProcessor" />
+		</route>		
+	</routeContext>
+	
+	<!-- ptz.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfPTZ" address="/PTZ" serviceClass="org.onvif.ver20.ptz.wsdl.PTZ">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="PTZRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="PTZ" autoStartup="{{service.ptz.enabled}}">
+			<from uri="cxf:bean:CxfPTZ" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>		
+	
+	<!-- imaging.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfImagingPort" address="/ImagingPort" serviceClass="org.onvif.ver20.imaging.wsdl.ImagingPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+
+	<routeContext id="ImagingRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Imaging" autoStartup="{{service.imaging.enabled}}">
+			<from uri="cxf:bean:CxfImagingPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+		
+	<!-- NVS -->
+	<!-- recording.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfRecordingPort" address="/Recording" serviceClass="org.onvif.ver10.recording.wsdl.RecordingPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="RecordingRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="RecordingPort" autoStartup="{{service.recording.enabled}}">
+			<from uri="cxf:bean:CxfRecordingPort" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+	
+	<!-- replay.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfReplay" address="/Replay" serviceClass="org.onvif.ver10.replay.wsdl.ReplayPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+
+	<routeContext id="ReplayRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Replay" autoStartup="{{service.replay.enabled}}">
+			<from uri="cxf:bean:CxfReplay" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+
+	<!-- receiver.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfReceiver" address="/Receiver" serviceClass="org.onvif.ver10.receiver.wsdl.ReceiverPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="ReceiverRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Receiver" autoStartup="{{service.receiver.enabled}}">
+			<from uri="cxf:bean:CxfReceiver" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+
+	<!-- search.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfSearch" address="/Search" serviceClass="org.onvif.ver10.search.wsdl.SearchPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="SearchRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Search" autoStartup="{{service.search.enabled}}">
+			<from uri="cxf:bean:CxfSearch" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+
+	<!-- NVD -->
+	<!-- display.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfDisplay" address="/Display" serviceClass="org.onvif.ver10.display.wsdl.DisplayPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="DisplayRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="Display" autoStartup="{{service.display.enabled}}">
+			<from uri="cxf:bean:CxfDisplay" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+	
+	
+</beans>

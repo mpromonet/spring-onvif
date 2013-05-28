@@ -16,18 +16,9 @@
 
   	<import resource="classpath:META-INF/cxf/cxf.xml" />  
       
- 	<import resource="camel-route-servlet.xml" />
-	
-	<import resource="camel-route-discovery.xml" />
-	<import resource="camel-route-device.xml" />
-	<import resource="camel-route-deviceio.xml" />
-	<import resource="camel-route-events.xml" />
-	<import resource="camel-route-recording.xml" />
-	<import resource="camel-route-replay.xml" />
-	<import resource="camel-route-imaging.xml" />
-	<import resource="camel-route-media.xml" />
-	<import resource="camel-route-ptz.xml" />
-	<import resource="camel-route-receiver.xml" />
+ 	<import resource="camel-route-servlet.xml" />	
+	<import resource="camel-route-ws.xml" />
+	<import resource="camel-route-ressources.xml" />
 	
 	<camelContext id="camelProcess" xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
 		<propertyPlaceholder id="device" location="classpath:META-INF/device.properties"/>
@@ -66,8 +57,17 @@
 		<!--  receiver.wsdl -->
 		<routeContextRef ref="ReceiverRoutes" />
 
+		<!--  search.wsdl -->
+		<routeContextRef ref="SearchRoutes" />
+
+		<!--  display.wsdl -->
+		<routeContextRef ref="DisplayRoutes" />
+
 		<!--  servlet -->
 		<routeContextRef ref="ServletRoutes" />
+
+		<!--  servlet -->
+		<routeContextRef ref="RessourcesRoutes" />
 
 		<!--  log -->
 		<intercept>
@@ -75,14 +75,14 @@
 		</intercept>
 
 		<!--  from Cxf endpoint to groovy processor-->
-		<route>
+		<route id="SoapProcessor">
 			<from uri="direct:SoapProcessor" />
 			<setHeader headerName="interface">
 				<groovy>exchange.getFromRouteId()</groovy>
 			</setHeader>
 			<to uri="seda:AsyncSoapProcessor" />
 		</route>
-		<route>
+		<route id="AsyncSoapProcessor">
 			<from uri="seda:AsyncSoapProcessor" />
 			<doTry>
 				<setHeader headerName="target">
