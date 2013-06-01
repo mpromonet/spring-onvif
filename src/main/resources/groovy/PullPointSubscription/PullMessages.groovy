@@ -1,4 +1,5 @@
 def rep = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
+def marshaller = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema").createMarshaller();
 
 for ( i in 0..9 ) 
 {
@@ -35,7 +36,6 @@ for ( i in 0..9 )
 	// convert message to dom
 	//----------------------------------------
 	def domResult = new javax.xml.transform.dom.DOMResult();
-	def marshaller = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema").createMarshaller();
 	marshaller.marshal(msg,domResult);
 
 	// append notification to the list
