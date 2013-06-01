@@ -359,7 +359,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:output message="tev:SetSynchronizationPointResponse" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SetSynchronizationPointResponse"/>
 		</wsdl:operation>
 		
-		
+	<!-- from bw-2.wsdl -->	
       <wsdl:operation name="Renew">
          <wsdl:input  name="RenewRequest" 
                       message="wsntw:RenewRequest" />
@@ -382,6 +382,38 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
                       message=
                       "wsntw:UnableToDestroySubscriptionFault" />     
       </wsdl:operation>
+	<wsdl:operation name="Notify">
+		<wsdl:input message="wsntw:Notify" />
+	</wsdl:operation>
+      <wsdl:operation name="Subscribe">
+         <wsdl:input  message="wsntw:SubscribeRequest" />
+         <wsdl:output message="wsntw:SubscribeResponse" />
+         <wsdl:fault  name="ResourceUnknownFault" 
+                      message="wsrf-rw:ResourceUnknownFault" />
+         <wsdl:fault  name="InvalidFilterFault" 
+                   message="wsntw:InvalidFilterFault"/>
+         <wsdl:fault  name="TopicExpressionDialectUnknownFault" 
+                   message="wsntw:TopicExpressionDialectUnknownFault"/>
+         <wsdl:fault  name="InvalidTopicExpressionFault" 
+                      message="wsntw:InvalidTopicExpressionFault" />
+         <wsdl:fault  name="TopicNotSupportedFault" 
+                      message="wsntw:TopicNotSupportedFault" />
+         <wsdl:fault  name="InvalidProducerPropertiesExpressionFault" 
+             message="wsntw:InvalidProducerPropertiesExpressionFault"/>
+         <wsdl:fault  name="InvalidMessageContentExpressionFault" 
+             message="wsntw:InvalidMessageContentExpressionFault"/>
+         <wsdl:fault  name="UnacceptableInitialTerminationTimeFault" 
+             message="wsntw:UnacceptableInitialTerminationTimeFault"/>
+         <wsdl:fault  name="UnrecognizedPolicyRequestFault" 
+             message="wsntw:UnrecognizedPolicyRequestFault"/>
+         <wsdl:fault  name="UnsupportedPolicyRequestFault" 
+             message="wsntw:UnsupportedPolicyRequestFault"/>
+         <wsdl:fault  name="NotifyMessageNotSupportedFault" 
+             message="wsntw:NotifyMessageNotSupportedFault"/>
+         <wsdl:fault  name="SubscribeCreationFailedFault" 
+                      message="wsntw:SubscribeCreationFailedFault"/>
+      </wsdl:operation>	
+	<!-- -->	
 		
 	</wsdl:portType>
 	<wsdl:binding name="PullPointSubscriptionBinding" type="tev:PullPointSubscription">
