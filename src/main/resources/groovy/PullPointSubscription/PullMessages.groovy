@@ -2,15 +2,23 @@ def rep = new org.onvif.ver10.events.wsdl.PullMessagesResponse();
 
 for ( i in 0..9 ) 
 {
-	def item = new org.onvif.ver10.schema.ItemList.SimpleItem();
-	item.setName("content");
-	item.setValue( "message" + i);
+	def sourceItem = new org.onvif.ver10.schema.ItemList.SimpleItem();
+	sourceItem.setName("source");
+	sourceItem.setValue( "**************");
 	
-	def itemList = new org.onvif.ver10.schema.ItemList();
-	itemList.getSimpleItem().add(item);
+	def source = new org.onvif.ver10.schema.ItemList();
+	source.getSimpleItem().add(sourceItem);
+
+	def dataItem = new org.onvif.ver10.schema.ItemList.SimpleItem();
+	dataItem.setName("data");
+	dataItem.setValue( "message" + i);
+	
+	def data = new org.onvif.ver10.schema.ItemList();
+	data.getSimpleItem().add(dataItem);
 	
 	def msg = new org.onvif.ver10.schema.Message();
-	msg.setData(itemList);
+	msg.setSource(source);
+	msg.setData(data);
 	
 	def domResult = new javax.xml.transform.dom.DOMResult();
 	def marshaller = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema").createMarshaller();
