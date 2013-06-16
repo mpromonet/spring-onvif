@@ -72,15 +72,11 @@
 		<property name="PTZConfiguration"><ref bean="ptzCfg" /></property>
 		<property name="metadataConfiguration"><ref bean="metadataCfg" /></property>
 	</bean>
-	
-	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
-		<camelcxf:properties>
-			<entry key="dataFormat" value="PAYLOAD"/>
-		</camelcxf:properties>    		
-		<camelcxf:binding> 
-			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
-		</camelcxf:binding> 
-	</camelcxf:cxfEndpoint>
+
+	<bean id="AdminUser" class="org.onvif.ver10.schema.User">
+		<property name="username"><value>admin</value></property>
+		<property name="userLevel"><util:constant static-field="org.onvif.ver10.schema.UserLevel.ADMINISTRATOR"/></property>
+	</bean> 
 
 	<routeContext id="RessourcesRoutes" xmlns="http://camel.apache.org/schema/spring">
 		<route>
@@ -92,6 +88,43 @@
 			<from uri="direct:getAdminUser" />
 			<setBody><simple>${ref:AdminUser}</simple></setBody>
 			<to uri="mock:getAdminUser" />
+		</route>		
+		
+
+		<route>
+			<from uri="direct:createUserTable" />
+			<setHeader headerName="body"><simple>${body}</simple></setHeader>
+			<setBody>
+				<constant>create table if not exists USERS(id varchar primary key not null, msg varchar)</constant>
+			</setBody>
+			<to uri="jdbc:dataSource"/>    
+			<setBody><simple>${header.body}</simple></setBody>
+			<to uri="mock:dataSource"/>    
+		</route>		
+			
+		<route>
+			<from uri="direct:getUserList" />
+			<to uri="direct:createUserTable" />
+			<setBody>
+				<constant>select * from USERS</constant>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     		
+		</route>		
+		<route>
+			<from uri="direct:addUser" />
+			<to uri="direct:createUserTable" />
+			<setBody>
+				<simple>insert into USERS values('${header.username}','${body}')</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     		
+		</route>		
+		<route>
+			<from uri="direct:delUser" />
+			<to uri="direct:createUserTable" />
+			<setBody>
+				<simple>delete from USERS where id='${header.username}'</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     		
 		</route>		
 	</routeContext>
 </beans>
