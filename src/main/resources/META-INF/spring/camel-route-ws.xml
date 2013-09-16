@@ -43,6 +43,17 @@
 	</routeContext>	
 	
 	<!-- events.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfSubscriptionManager" address="/SubscriptionManager" serviceClass="org.oasis_open.docs.wsn.bw_2.SubscriptionManager">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+		<camelcxf:features>
+			<wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+		</camelcxf:features>	
+	</camelcxf:cxfEndpoint>
 	<camelcxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
@@ -59,7 +70,12 @@
 			<from uri="cxf:bean:CxfPullPointSubscription" />
 			<to uri="direct:SoapProcessor" />
 		</route>
+		<route id="SubscriptionManager" autoStartup="{{service.event.enabled}}">
+			<from uri="cxf:bean:CxfSubscriptionManager" />
+			<to uri="direct:SoapProcessor" />
+		</route>
 	</routeContext>
+
 
 	<camelcxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
 		<camelcxf:properties>
