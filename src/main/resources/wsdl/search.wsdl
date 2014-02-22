@@ -10,8 +10,8 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tse="http://www.onvif.org/ver10/search/wsdl" targetNamespace="http://www.onvif.org/ver10/search/wsdl">
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver10/search/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.2">
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
+		<xs:schema targetNamespace="http://www.onvif.org/ver10/search/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.4">
+			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../ver10/schema/onvif.xsd"/>
 			<!--  Message Request/Responses elements  -->
 			<!--===============================-->
 			<xs:element name="GetServiceCapabilities">
@@ -36,6 +36,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 				</xs:sequence>
 				<xs:attribute name="MetadataSearch" type="xs:boolean"/>
+				<xs:attribute name="GeneralStartEvents" type="xs:boolean"><xs:annotation><xs:documentation> Indicates support for general virtual property events in the FindEvents method.</xs:documentation></xs:annotation></xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
 			</xs:complexType>
 			<xs:element name="Capabilities" type="tse:Capabilities"/>
@@ -676,9 +677,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 		</wsdl:operation>
 		<!--===============================-->
 		<wsdl:operation name="GetSearchState">
-			<wsdl:documentation>GetSearchState returns the current state of the specified search session. Queued, Searching
-				or Completed. This operation is mandatory to support for a device implementing the recording
-				search service.</wsdl:documentation>
+			<wsdl:documentation>GetSearchState returns the current state of the specified search session. This command is deprecated .</wsdl:documentation>
 			<wsdl:input message="tse:GetSearchStateRequest"/>
 			<wsdl:output message="tse:GetSearchStateResponse"/>
 		</wsdl:operation>

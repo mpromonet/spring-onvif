@@ -10,8 +10,8 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tptz="http://www.onvif.org/ver20/ptz/wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" name="PTZService" targetNamespace="http://www.onvif.org/ver20/ptz/wsdl">
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver20/ptz/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tptz="http://www.onvif.org/ver20/ptz/wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.2">
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
+		<xs:schema targetNamespace="http://www.onvif.org/ver20/ptz/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tptz="http://www.onvif.org/ver20/ptz/wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.4">
+			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../../../ver10/schema/onvif.xsd"/>
 			<!--  Message Request/Responses elements  -->
 			<!--===============================-->
 			<xs:element name="GetServiceCapabilities">
@@ -43,6 +43,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				<xs:attribute name="Reverse" type="xs:boolean">
 					<xs:annotation>
 						<xs:documentation>Indicates whether or not reversing of PT control direction is supported.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="GetCompatibleConfigurations" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Indicates support for the GetCompatibleConfigurations command.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
@@ -615,6 +620,30 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				</xs:complexType>
 			</xs:element>
 			<!--===============================-->
+			<xs:element name="GetCompatibleConfigurations">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ProfileToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>Contains the token of an existing media profile the configurations shall be compatible with.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetCompatibleConfigurationsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PTZConfiguration" type="tt:PTZConfiguration" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>A list of all existing PTZConfigurations on the NVT that is suitable to be added to the addressed media profile.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
 		</xs:schema>
 	</wsdl:types>
 	<wsdl:message name="GetServiceCapabilitiesRequest">
@@ -773,6 +802,12 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 	<wsdl:message name="RemovePresetTourResponse">
 		<wsdl:part name="parameters" element="tptz:RemovePresetTourResponse"/>
 	</wsdl:message>
+	<wsdl:message name="GetCompatibleConfigurationsRequest">
+		<wsdl:part name="parameters" element="tptz:GetCompatibleConfigurations"/>
+	</wsdl:message>
+	<wsdl:message name="GetCompatibleConfigurationsResponse">
+		<wsdl:part name="parameters" element="tptz:GetCompatibleConfigurationsResponse"/>
+	</wsdl:message>
 	<wsdl:portType name="PTZ">
 		<wsdl:operation name="GetServiceCapabilities">
 			<wsdl:documentation>Returns the capabilities of the PTZ service. The result is returned in a typed answer.</wsdl:documentation>
@@ -927,7 +962,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:output message="tptz:SetHomePositionResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="ContinuousMove">
-			<wsdl:documentation>Operation for continuous Pan/Tilt and Zoom movements. The operation is supported if the PTZNode supports at least one continuous Pan/Tilt or Zoom space. Speed argument is optional. If the speed argument is omitted, the default speed set by the PTZConfiguration will be used.</wsdl:documentation>
+			<wsdl:documentation>Operation for continuous Pan/Tilt and Zoom movements. The operation is supported if the PTZNode supports at least one continuous Pan/Tilt or Zoom space. If the space argument is omitted, the default space set by the PTZConfiguration will be used.</wsdl:documentation>
 			<wsdl:input message="tptz:ContinuousMoveRequest"/>
 			<wsdl:output message="tptz:ContinuousMoveResponse"/>
 		</wsdl:operation>
@@ -996,6 +1031,15 @@ If no stop argument for pan, tilt or zoom is set, the device will stop all ongoi
 			<wsdl:documentation>Operation to delete a specific preset tour from the media profile.</wsdl:documentation>
 			<wsdl:input message="tptz:RemovePresetTourRequest"/>
 			<wsdl:output message="tptz:RemovePresetTourResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetCompatibleConfigurations">
+			<wsdl:documentation>Operation to get all available PTZConfigurations that can be added to the referenced media profile. <br/>
+				A device providing more than one PTZConfiguration or more than one VideoSourceConfiguration or which has any other resource
+				interdependency between PTZConfiguration entities and other resources listable in a media profile should implement this operation.
+				PTZConfiguration entities returned by this operation shall not fail on adding them to the referenced media profile.
+			</wsdl:documentation>
+			<wsdl:input message="tptz:GetCompatibleConfigurationsRequest"/>
+			<wsdl:output message="tptz:GetCompatibleConfigurationsResponse"/>
 		</wsdl:operation>
 	</wsdl:portType>
 	<wsdl:binding name="PTZBinding" type="tptz:PTZ">
@@ -1227,6 +1271,16 @@ If no stop argument for pan, tilt or zoom is set, the device will stop all ongoi
 		</wsdl:operation>
 		<wsdl:operation name="RemovePresetTour">
 			<soap:operation soapAction="http://www.onvif.org/ver20/ptz/wsdl/RemovePresetTour"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetCompatibleConfigurations">
+			<soap:operation
+				soapAction="http://www.onvif.org/ver20/ptz/wsdl/GetCompatibleConfigurations"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>

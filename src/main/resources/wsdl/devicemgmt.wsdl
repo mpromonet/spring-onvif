@@ -10,8 +10,8 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" targetNamespace="http://www.onvif.org/ver10/device/wsdl">
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" elementFormDefault="qualified" version="2.2.1">
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
+		<xs:schema targetNamespace="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" elementFormDefault="qualified" version="2.4.1">
+			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../../../ver10/schema/onvif.xsd"/>
 			<!--===============================-->
 			<xs:element name="GetServices">
 				<xs:complexType>
@@ -238,6 +238,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				<xs:attribute name="SupportedEAPMethods" type="tds:EAPMethodTypes">
 					<xs:annotation>
 						<xs:documentation>EAP Methods supported by the device. The int values refer to the <a href="http://www.iana.org/assignments/eap-numbers/eap-numbers.xhtml">IANA EAP Registry</a>.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="MaxUsers" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>The maximum number of users that the device supports.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
@@ -1113,6 +1118,13 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 							<xs:annotation>
 								<xs:documentation>
 									Indicates whether or not a reboot is required after configuration updates.
+									If a device responds with RebootNeeded set to false, the device can be reached
+									via the new IP address without further action. A client should be aware that a device
+									may not be responsive for a short period of time until it signals availability at
+									the new address via the discovery Hello messages.
+									If a device responds with RebootNeeded set to true, it will be further available under
+									its previous IP address. The settings will only be activated when the device is
+									rebooted via the SystemReboot command.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -2848,9 +2860,9 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					<li>tt:Wiper|On – Request to start the wiper.</li>
 					<li>tt:Wiper|Off – Request to stop the wiper.</li>
 					<li>tt:Washer|On – Request to start the washer.</li>
-					<li>tt:Washer|Off – Request to stop the washe.</li>
-					<li>tt:WashingProcedue|On – Request to start the washing procedue.</li>
-					<li>tt: WashingProcedue |Off – Request to stop the washing procedue.</li>
+					<li>tt:Washer|Off – Request to stop the washer.</li>
+					<li>tt:WashingProcedure|On – Request to start the washing procedure.</li>
+					<li>tt: WashingProcedure |Off – Request to stop the washing procedure.</li>
 				</ul>
 				A device that indicates auxiliary service capability shall support this command.</wsdl:documentation>
 			<wsdl:input message="tds:SendAuxiliaryCommandRequest"/>

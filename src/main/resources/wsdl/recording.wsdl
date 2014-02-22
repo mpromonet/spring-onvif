@@ -10,8 +10,8 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:trc="http://www.onvif.org/ver10/recording/wsdl" targetNamespace="http://www.onvif.org/ver10/recording/wsdl">
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver10/recording/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.2">
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
+		<xs:schema targetNamespace="http://www.onvif.org/ver10/recording/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.4">
+			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../ver10/schema/onvif.xsd"/>
 			<!--  Message Request/Responses elements  -->
 			<!--===============================-->
 			<xs:element name="GetServiceCapabilities">
@@ -63,6 +63,16 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				<xs:attribute name="MaxRecordings" type="xs:float">
 					<xs:annotation>
 						<xs:documentation>Maximum number of recordings supported. (Integer values only.)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="MaxRecordingJobs" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Maximum total number of supported recording jobs by the device.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Options" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Indication if the device supports the GetRecordingOptions command.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
@@ -434,6 +444,72 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="GetRecordingOptions">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RecordingToken" type="tt:RecordingReference">
+							<xs:annotation>
+								<xs:documentation>Token of the recording.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetRecordingOptionsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Options" type="trc:RecordingOptions">
+							<xs:annotation>
+								<xs:documentation>Configuration of the recording.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:complexType name="RecordingOptions">
+				<xs:sequence>
+					<xs:element name="Job" type="trc:JobOptions"/>
+					<xs:element name="Track" type="trc:TrackOptions"/>
+					<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="JobOptions">
+				<xs:attribute name="Spare" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of spare jobs that can be created for the recording.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="CompatibleSources" type="tt:StringAttrList">
+					<xs:annotation>
+						<xs:documentation>A device that supports recording of a restricted set of Media Service Profiles returns the list of profiles that can be recorded on the given Recording.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:anyAttribute processContents="lax"/>
+			</xs:complexType>
+			<xs:complexType name="TrackOptions">
+				<xs:attribute name="SpareTotal" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Total spare number of tracks that can be added to this recording.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="SpareVideo" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of spare Video tracks that can be added to this recording.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="SpareAudio" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of spare Aduio tracks that can be added to this recording.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="SpareMetadata" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of spare Metadata tracks that can be added to this recording.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:anyAttribute processContents="lax"/>
+			</xs:complexType>
 		</xs:schema>
 	</wsdl:types>
 	<wsdl:message name="GetServiceCapabilitiesRequest">
@@ -471,6 +547,12 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 	</wsdl:message>
 	<wsdl:message name="GetRecordingConfigurationResponse">
 		<wsdl:part name="parameters" element="trc:GetRecordingConfigurationResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetRecordingOptionsRequest">
+		<wsdl:part name="parameters" element="trc:GetRecordingOptions"/>
+	</wsdl:message>
+	<wsdl:message name="GetRecordingOptionsResponse">
+		<wsdl:part name="parameters" element="trc:GetRecordingOptionsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="CreateTrackRequest">
 		<wsdl:part name="parameters" element="trc:CreateTrack"/>
@@ -591,6 +673,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:documentation>GetRecordingConfiguration shall retrieve the recording configuration for a recording.</wsdl:documentation>
 			<wsdl:input message="trc:GetRecordingConfigurationRequest"/>
 			<wsdl:output message="trc:GetRecordingConfigurationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetRecordingOptions">
+			<wsdl:documentation>GetRecordingOptions returns information for a recording identified by the RecordingToken. The information includes the number of additonal tracks as well as recording jobs that can be configured.</wsdl:documentation>
+			<wsdl:input message="trc:GetRecordingOptionsRequest"/>
+			<wsdl:output message="trc:GetRecordingOptionsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="CreateTrack">
 			<wsdl:documentation>This method shall create a new track within a recording.<br/>
@@ -717,6 +804,15 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 		</wsdl:operation>
 		<wsdl:operation name="GetRecordingConfiguration">
 			<soap:operation soapAction="http://www.onvif.org/ver10/recording/wsdl/GetRecordingConfiguration"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetRecordingOptions">
+			<soap:operation soapAction="http://www.onvif.org/ver10/recording/wsdl/GetRecordingOptions"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>

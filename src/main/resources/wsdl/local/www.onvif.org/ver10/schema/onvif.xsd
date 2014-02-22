@@ -8,7 +8,7 @@ Recipients of this document may copy, distribute, publish, or display this docum
 THIS DOCUMENT IS PROVIDED "AS IS," AND THE CORPORATION AND ITS MEMBERS AND THEIR AFFILIATES, MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THIS DOCUMENT ARE SUITABLE FOR ANY PURPOSE; OR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
 IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT, WHETHER OR NOT (1) THE CORPORATION, MEMBERS OR THEIR AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, OR (2) SUCH DAMAGES WERE REASONABLY FORESEEABLE, AND ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT.  THE FOREGOING DISCLAIMER AND LIMITATION ON LIABILITY DO NOT APPLY TO, INVALIDATE, OR LIMIT REPRESENTATIONS AND WARRANTIES MADE BY THE MEMBERS AND THEIR RESPECTIVE AFFILIATES TO THE CORPORATION AND OTHER MEMBERS IN CERTAIN WRITTEN POLICIES OF THE CORPORATION.
 -->
-<xs:schema xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" targetNamespace="http://www.onvif.org/ver10/schema" elementFormDefault="qualified" version="2.2">
+<xs:schema xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" targetNamespace="http://www.onvif.org/ver10/schema" elementFormDefault="qualified" version="2.4.1">
 	<xs:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="http://www.w3.org/2005/05/xmlmime"/>
 	<xs:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
 	<xs:import namespace="http://docs.oasis-open.org/wsn/b-2" schemaLocation="http://docs.oasis-open.org/wsn/b-2.xsd"/>
@@ -226,7 +226,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<xs:documentation>
 			A media profile consists of a set of media configurations. Media profiles are used by a client
 			to configure properties of a media stream from an NVT.<br/>
-			An NVT shall provide at least one media profile at boot. An NVT should provide ready to use
+			An NVT shall provide at least one media profile at boot. An NVT should provide “ready to use”
 			profiles for the most common media configurations that the device offers.<br/>
 			A profile consists of a set of interconnected configuration entities. Configurations are provided
 			by the NVT and can be either static or created dynamically by the NVT. For example, the
@@ -960,7 +960,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					</xs:element>
 					<xs:element name="Analytics" type="xs:boolean" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Defines if data to include from the analytics engine part shall be included in the stream</xs:documentation>
+							<xs:documentation>Defines whether the streamed metadata will include metadata from the analytics engines (video, cell motion, audio etc.)</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Multicast" type="tt:MulticastConfiguration">
@@ -2890,7 +2890,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 			</xs:element>
 			<xs:element name="Minor" type="xs:int">
 				<xs:annotation>
-					<xs:documentation>Two digit minor version number (e.g. 1 maps to "01" and 20 maps to "20").</xs:documentation>
+					<xs:documentation>Two digit minor version number (e.g. X.0.1 maps to "01" and X.2.1 maps to "21" where X stands for Major version number).</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
@@ -3643,7 +3643,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 	<xs:complexType name="PTZNodeExtension">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="SupportedPresetTour" type="tt:PTZPresetTourSupported">
+			<xs:element name="SupportedPresetTour" type="tt:PTZPresetTourSupported" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>
             Detail of supported Preset Tour feature.
@@ -4157,13 +4157,13 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 		<xs:sequence>
 			<xs:element name="PanTilt" type="tt:Vector2D" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Pan and tilt speed. The x component corresponds to pan and the y component to tilt.</xs:documentation>
+					<xs:documentation>Pan and tilt speed. The x component corresponds to pan and the y component to tilt. If omitted in a request, the current (if any) PanTilt movement should not be affected. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Zoom" type="tt:Vector1D" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>
-            A zoom speed.
+            A zoom speed. If omitted in a request, the current (if any) Zoom movement should not be affected.
           </xs:documentation>
 				</xs:annotation>
 			</xs:element>
@@ -5214,6 +5214,17 @@ If set to 0.0, infinity will be used.</xs:documentation>
 	<!--===============================-->
 	<xs:complexType name="ImagingSettingsExtension202">
 		<xs:sequence>
+			<xs:element name="IrCutFilterAutoAdjustment" type="tt:IrCutFilterAutoAdjustment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An optional parameter applied to only auto mode to adjust timing of toggling Ir cut filter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:ImagingSettingsExtension203" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="ImagingSettingsExtension203">
+		<xs:sequence>
 			<xs:any namespace="##targetNamespace" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -5247,6 +5258,43 @@ If set to 0.0, infinity will be used.</xs:documentation>
 			<xs:enumeration value="ON"/>
 			<xs:enumeration value="AUTO"/>
 			<xs:enumeration value="Extended"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!--===============================-->
+	<xs:complexType name="IrCutFilterAutoAdjustment">
+		<xs:sequence>
+			<xs:element name="BoundaryType" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Specifies which boundaries to automatically toggle Ir cut filter following parameters are applied to. Its options shall be chosen from tt:IrCutFilterAutoBoundaryType.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BoundaryOffset" type="xs:float" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Adjusts boundary exposure level for toggling Ir cut filter to on/off specified with unitless normalized value from +1.0 to -1.0. Zero is default and -1.0 is the darkest adjustment (Unitless).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResponseTime" type="xs:duration" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Delay time of toggling Ir cut filter to on/off after crossing of the boundary exposure levels.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:IrCutFilterAutoAdjustmentExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="IrCutFilterAutoAdjustmentExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:simpleType name="IrCutFilterAutoBoundaryType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Common" />
+			<xs:enumeration value="ToOn" />
+			<xs:enumeration value="ToOff" />
+			<xs:enumeration value="Extended" />
 		</xs:restriction>
 	</xs:simpleType>
 	<!--===============================-->
@@ -5473,6 +5521,17 @@ If set to 0.0, infinity will be used.</xs:documentation>
 	<!--===============================-->
 	<xs:complexType name="ImagingOptions20Extension2">
 		<xs:sequence>
+			<xs:element name="IrCutFilterAutoAdjustment" type="tt:IrCutFilterAutoAdjustmentOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Options of parameters for adjustment of Ir cut filter auto mode.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:ImagingOptions20Extension3" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="ImagingOptions20Extension3">
+		<xs:sequence>
 			<xs:any namespace="##targetNamespace" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -5486,7 +5545,7 @@ If set to 0.0, infinity will be used.</xs:documentation>
 			</xs:element>
 			<xs:element name="Level" type="tt:FloatRange" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>Wide dynamic range mode (on/off).</xs:documentation>
+					<xs:documentation>Valid range of the Image Stabilization.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Extension" type="tt:ImageStabilizationOptionsExtension" minOccurs="0"/>
@@ -5497,6 +5556,34 @@ If set to 0.0, infinity will be used.</xs:documentation>
 	<xs:complexType name="ImageStabilizationOptionsExtension">
 		<xs:sequence>
 			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="IrCutFilterAutoAdjustmentOptions">
+		<xs:sequence>
+			<xs:element name="BoundaryType" type="xs:string" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Supported options of boundary types for adjustment of Ir cut filter auto mode. The opptions shall be chosen from tt:IrCutFilterAutoBoundaryType. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BoundaryOffset" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not boundary offset for toggling Ir cut filter is supported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResponseTimeRange" type="tt:DurationRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Supported range of delay time for toggling Ir cut filter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:IrCutFilterAutoAdjustmentOptionsExtension" minOccurs="0" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="IrCutFilterAutoAdjustmentOptionsExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 	<!--===============================-->
@@ -6559,8 +6646,41 @@ If set to 0.0, infinity will be used.</xs:documentation>
 	<!--===============================-->
 	<xs:complexType name="MetadataStreamExtension">
 		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AudioAnalyticsStream" type="tt:AudioAnalyticsStream" minOccurs="0"/>
+			<xs:element name="Extension" type="tt:MetadataStreamExtension2" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="MetadataStreamExtension2">
+		<xs:sequence>
+			<xs:any namespace="##targetNamespace" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="AudioAnalyticsStream">
+		<xs:sequence>
+			<xs:element name="AudioDescriptor" type="tt:AudioDescriptor" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Extension" type="tt:AudioAnalyticsStreamExtension" minOccurs="0" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="AudioDescriptor">
+		<xs:sequence>
+		<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="UtcTime" type="xs:dateTime" use="required">
+		</xs:attribute>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="AudioAnalyticsStreamExtension">
+		<xs:sequence>
 			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
 	</xs:complexType>
 	<!--===============================-->
 	<xs:element name="MetadataStream" type="tt:MetadataStream"/>
@@ -6953,7 +7073,7 @@ and sample rate. </xs:documentation>
 			</xs:element>
 			<xs:element name="NumberRecordings" type="xs:int">
 				<xs:annotation>
-					<xs:documentation>The device contains at least this many recordings.</xs:documentation>
+					<xs:documentation>The device contains this many recordings.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -7245,12 +7365,12 @@ and sample rate. </xs:documentation>
 				<xs:annotation>
 					<xs:documentation>
 				Identifier for the source chosen by the client that creates the structure.
-				This identifier is opaque to the device. Clients may use any type of URI for this field.</xs:documentation>
+				This identifier is opaque to the device. Clients may use any type of URI for this field. A device shall support at least 128 characters.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Name" type="tt:Name">
 				<xs:annotation>
-					<xs:documentation>Informative user readable name of the source, e.g. "Camera23".</xs:documentation>
+					<xs:documentation>Informative user readable name of the source, e.g. "Camera23". A device shall support at least 20 characters.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Location" type="tt:Description">
@@ -7265,7 +7385,7 @@ and sample rate. </xs:documentation>
 			</xs:element>
 			<xs:element name="Address" type="xs:anyURI">
 				<xs:annotation>
-					<xs:documentation>URI provided by the service supplying data to be recorded.</xs:documentation>
+					<xs:documentation>URI provided by the service supplying data to be recorded. A device shall support at least 128 characters.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -7470,6 +7590,11 @@ and sample rate. </xs:documentation>
 			</xs:element>
 			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
+		<xs:attribute name="PtzSpaces" type="tt:StringAttrList">
+			<xs:annotation>
+				<xs:documentation>List of all PTZ spaces active for recording. Note that events are only recorded on position changes and the actual point of recording may not necessarily contain an event of the specified type. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:anyAttribute processContents="lax"/>
 	</xs:complexType>
 	<!--===============================-->
@@ -7659,7 +7784,7 @@ and sample rate. </xs:documentation>
 			<xs:element name="SourceTag" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>If the received RTSP stream contains multiple tracks of the same type, the
-				SourceTag differentiates between those Tracks.</xs:documentation>
+						SourceTag differentiates between those Tracks. This field can be ignored in case of recording a local source.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Destination" type="tt:TrackReference">
@@ -8000,5 +8125,427 @@ and sample rate. </xs:documentation>
 	</xs:complexType>
 	<!--=========================================-->
 	<!--  End, Action event payload Types   -->
+	<!--=========================================-->
+        <!--=========================================-->
+	<!--  Begin, Audio event types               -->
+	<!--=========================================-->
+	<xs:simpleType name="AudioClassType">
+		<xs:annotation>
+		<xs:documentation>
+		  AudioClassType acceptable values are;
+		   gun_shot, scream, glass_breaking, tire_screech   
+		</xs:documentation>
+		</xs:annotation>
+	<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:complexType name="AudioClassCandidate">
+	<xs:sequence>
+		<xs:element name="Type" type="tt:AudioClassType">
+			<xs:annotation>
+			<xs:documentation>Indicates audio class label</xs:documentation>
+			</xs:annotation>
+		</xs:element> 
+ 		<xs:element name="Likelihood" type="xs:float">
+			<xs:annotation>
+			<xs:documentation>A likelihood/probability that the corresponding audio event belongs to this class. The sum of the likelihoods shall NOT exceed 1</xs:documentation>
+			</xs:annotation>
+		</xs:element>  
+		<xs:any namespace="##targetNamespace" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+	</xs:sequence>
+	<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="AudioClassDescriptor">
+	<xs:sequence>
+		<xs:element name="ClassCandidate" type="tt:AudioClassCandidate" minOccurs="0" maxOccurs="unbounded">
+			<xs:annotation>
+			<xs:documentation>Array of audio class label and class probability</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="Extension" type="tt:AudioClassDescriptorExtension" minOccurs="0"/>
+	</xs:sequence>
+	<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<xs:complexType name="AudioClassDescriptorExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--=========================================-->
+	<!--  End, Audio event types                 -->
+	<!--=========================================-->	
+	<!--==================================-->
+	<!--  Begin, OSD Device Types         -->
+	<!--==================================-->
+	<xs:complexType name="OSDReference">
+		<xs:simpleContent>
+			<xs:extension base="tt:ReferenceToken">
+				<xs:anyAttribute processContents="lax"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:simpleType name="OSDType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Text"/>
+			<xs:enumeration value="Image"/>
+			<xs:enumeration value="Extended"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!--===============================-->
+	<xs:complexType name="OSDPosConfiguration">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>For OSD position type, following are the pre-defined: <ul><li>UpperLeft</li>
+						<li>UpperRight</li>
+						<li>LowerLeft</li>
+						<li>LowerRight</li>
+						<li>Custom</li></ul>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Pos" type="tt:Vector" minOccurs="0"/>
+			<xs:element name="Extension" type="tt:OSDPosConfigurationExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDPosConfigurationExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDColor">
+		<xs:annotation>
+			<xs:documentation>The value range of "Transparent" could be defined by vendors only should follow this rule: the minimum value means non-transparent and the maximum value maens fully transparent.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Color" type="tt:Color"/>
+		</xs:sequence>
+		<xs:attribute name="Transparent" type="xs:int" use="optional"/>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDTextConfiguration">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						The following OSD Text Type are defined:<ul>
+							<li>Plain - The Plain type means the OSD is shown as a text string which defined in the "PlainText" item.</li>
+							<li>Date - The Date type means the OSD is shown as a date, format of which should be present in the "DateFormat" item.</li>
+							<li>Time - The Time type means the OSD is shown as a time, format of which should be present in the "TimeFormat" item.</li>
+							<li>DateAndTime - The DateAndTime type means the OSD is shown as date and time, format of which should be present in the "DateFormat" and the "TimeFormat" item.</li>
+						</ul>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DateFormat" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						List of supported OSD date formats. This element shall be present when the value of Type field has Date or DateAndTime. The following DateFormat are defined:<ul>
+							<li>M/d/yyyy - e.g. 3/6/2013</li>
+							<li>MM/dd/yyyy - e.g. 03/06/2013</li>
+							<li>dd/MM/yyyy - e.g. 06/03/2013</li>
+							<li>yyyy/MM/dd - e.g. 2013/03/06</li>
+							<li>yyyy-MM-dd - e.g. 2013-06-03</li>
+							<li>dddd, MMMM dd, yyyy - e.g. Wednesday, March 06, 2013</li>
+							<li>MMMM dd, yyyy - e.g. March 06, 2013</li>
+							<li>dd MMMM, yyyy - e.g. 06 March, 2013</li>
+						</ul>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeFormat" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						List of supported OSD time formats. This element shall be present when the value of Type field has Time or DateAndTime. The following TimeFormat are defined:<ul>
+							<li>h:mm:ss tt - e.g. 2:14:21 PM</li>
+							<li>hh:mm:ss tt - e.g. 02:14:21 PM</li>
+							<li>H:mm:ss - e.g. 14:14:21</li>
+							<li>HH:mm:ss - e.g. 14:14:21</li>
+						</ul>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FontSize" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Font size of the text in pt.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FontColor" type="tt:OSDColor" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Font color of the text.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BackgroundColor" type="tt:OSDColor" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Background color of the text.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlainText" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The content of text to be displayed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:OSDTextConfigurationExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDTextConfigurationExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDImgConfiguration">
+		<xs:sequence>
+			<xs:element name="ImgPath" type="xs:anyURI">
+				<xs:annotation>
+					<xs:documentation>The URI of the image which to be displayed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:OSDImgConfigurationExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDImgConfigurationExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="ColorspaceRange">
+		<xs:sequence>
+			<xs:element name="X" type="tt:FloatRange"/>
+			<xs:element name="Y" type="tt:FloatRange"/>
+			<xs:element name="Z" type="tt:FloatRange"/>
+			<xs:element name="Colorspace" type="xs:anyURI"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="ColorOptions">
+		<xs:annotation>
+			<xs:documentation>Describe the option of the color supported. Either list each color or define the range of color value. The following values are acceptable for Colourspace attribute.<ul><li>http://www.onvif.org/ver10/colorspace/YCbCr - YCbCr colourspace</li>
+				<li>http://www.onvif.org/ver10/colorspace/CIELUV - CIE LUV</li>
+				<li>http://www.onvif.org/ver10/colorspace/CIELAB - CIE 1976 (L*a*b*)</li>
+				<li>http://www.onvif.org/ver10/colorspace/HSV - HSV colourspace</li></ul>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="ColorList" type="tt:Color" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>List the supported color.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ColorspaceRange" type="tt:ColorspaceRange" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Define the rang of color supported.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDColorOptions">
+		<xs:annotation>
+			<xs:documentation>Describe the option of the color and its transparency.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Color" type="tt:ColorOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Optional list of supported colors.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Transparent" type="tt:IntRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Range of the transparent level. Larger means more tranparent.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:OSDColorOptionsExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDColorOptionsExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDTextOptions">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of supported OSD text type. When a device indicates the supported number relating to Text type in MaximumNumberOfOSDs, the type shall be presented.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FontSizeRange" type="tt:IntRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Range of the font size value.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DateFormat" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of supported date format.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeFormat" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of supported time format.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FontColor" type="tt:OSDColorOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>List of supported font color.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BackgroundColor" type="tt:OSDColorOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>List of supported background color.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:OSDTextOptionsExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDTextOptionsExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDImgOptions">
+		<xs:sequence>
+			<xs:element name="ImagePath" type="xs:anyURI" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of avaiable uris of image.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:OSDImgOptionsExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDImgOptionsExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDConfiguration">
+		<xs:complexContent>
+			<xs:extension base="tt:DeviceEntity">
+				<xs:sequence>
+					<xs:element name="VideoSourceConfigurationToken" type="tt:OSDReference">
+						<xs:annotation>
+							<xs:documentation>Reference to the video source configuration.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Type" type="tt:OSDType">
+						<xs:annotation>
+							<xs:documentation>Type of OSD.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Position" type="tt:OSDPosConfiguration">
+						<xs:annotation>
+							<xs:documentation>Position configuration of OSD.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TextString" type="tt:OSDTextConfiguration" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Text configuration of OSD. It shall be present when the value of Type field is Text.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Image" type="tt:OSDImgConfiguration" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Image configuration of OSD. It shall be present when the value of Type field is Image</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Extension" type="tt:OSDConfigurationExtension" minOccurs="0"/>
+				</xs:sequence>
+				<xs:anyAttribute processContents="lax"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDConfigurationExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="MaximumNumberOfOSDs">
+		<xs:attribute name="Total" type="xs:int" use="required"/>
+		<xs:attribute name="Image" type="xs:int"/>
+		<xs:attribute name="PlainText" type="xs:int"/>
+		<xs:attribute name="Date" type="xs:int"/>
+		<xs:attribute name="Time" type="xs:int"/>
+		<xs:attribute name="DateAndTime" type="xs:int"/>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDConfigurationOptions">
+		<xs:sequence>
+			<xs:element name="MaximumNumberOfOSDs" type="tt:MaximumNumberOfOSDs">
+				<xs:annotation>
+					<xs:documentation>The maximum number of OSD configurations supported for the specificate video source configuration. If a device limits the number of instances by OSDType, it should indicate the supported number via the related attribute.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="tt:OSDType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List supported type of OSD configuration. When a device indicates the supported number for each types in MaximumNumberOfOSDs, related type shall be presented. A device shall return Option element relating to listed type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PositionOption" type="xs:string" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List available OSD position type. Following are the pre-defined:<ul><li>UpperLeft</li>
+						<li>UpperRight</li>
+						<li>LowerLeft</li>
+						<li>LowerRight</li>
+						<li>Custom</li></ul>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TextOption" type="tt:OSDTextOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Option of the OSD text configuration. This element shall be returned if the device is signaling the support for Text.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ImageOption" type="tt:OSDImgOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Option of the OSD image configuration. This element shall be returned if the device is signaling the support for Image.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Extension" type="tt:OSDConfigurationOptionsExtension" minOccurs="0"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--===============================-->
+	<xs:complexType name="OSDConfigurationOptionsExtension">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	<!--=========================================-->
+	<!--  End, OSD Device Types                  -->
 	<!--=========================================-->
 </xs:schema>

@@ -11,11 +11,10 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" xmlns:wstop="http://docs.oasis-open.org/wsn/t-1" xmlns:wsntw="http://docs.oasis-open.org/wsn/bw-2" xmlns:tev="http://www.onvif.org/ver10/events/wsdl" xmlns:wsrf-rw="http://docs.oasis-open.org/wsrf/rw-2" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" targetNamespace="http://www.onvif.org/ver10/events/wsdl">
 	<wsdl:import namespace="http://docs.oasis-open.org/wsn/bw-2" location="http://docs.oasis-open.org/wsn/bw-2.wsdl"/>
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver10/events/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:wstop="http://docs.oasis-open.org/wsn/t-1" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" elementFormDefault="qualified" version="2.2.1">
+		<xs:schema targetNamespace="http://www.onvif.org/ver10/events/wsdl" xmlns:wstop="http://docs.oasis-open.org/wsn/t-1" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" elementFormDefault="qualified" version="2.4">
 			<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="http://www.w3.org/2005/08/addressing/ws-addr.xsd"/>
 			<xs:import namespace="http://docs.oasis-open.org/wsn/t-1" schemaLocation="http://docs.oasis-open.org/wsn/t-1.xsd"/>
 			<xs:import namespace="http://docs.oasis-open.org/wsn/b-2" schemaLocation="http://docs.oasis-open.org/wsn/b-2.xsd"/>
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
 			<!--  Message Request/Responses elements  -->
 			<!--===============================-->
 			<xs:element name="GetServiceCapabilities">
@@ -54,11 +53,6 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 						<xs:documentation>Indicates that the WS Pausable Subscription Manager Interface is supported.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
-				<xs:attribute name="RateLimitPolicySupport" type="xs:boolean">
-					<xs:annotation>
-						<xs:documentation>Indication if the device supports the rate limitation policy.</xs:documentation>
-					</xs:annotation>
-				</xs:attribute>
 				<xs:attribute name="MaxNotificationProducers" type="xs:int">
 					<xs:annotation>
 						<xs:documentation>Maximum number of supported notification producers as defined by WS-BaseNotification.</xs:documentation>
@@ -67,6 +61,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				<xs:attribute name="MaxPullPoints" type="xs:int">
 					<xs:annotation>
 						<xs:documentation>Maximum supported number of notification pull points.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="PersistentNotificationStorage" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Indication if the device supports persistent notification storage.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
@@ -179,6 +178,21 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				</xs:complexType>
 			</xs:element>
 			<!--===============================-->
+			<xs:element name="Seek">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UtcTime" type="xs:dateTime"><xs:annotation><xs:documentation>The date and time to match against stored messages.</xs:documentation></xs:annotation></xs:element>
+						<xs:element name="Reverse" type="xs:boolean" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>Reverse the pull direction of PullMessages.</xs:documentation></xs:annotation></xs:element>
+						<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SeekResponse">
+				<xs:complexType>
+					<xs:sequence/>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
 			<xs:element name="SetSynchronizationPoint">
 				<xs:complexType>
 					<xs:sequence/>
@@ -217,7 +231,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 							<xs:annotation>
 								<xs:documentation>
 							Defines the XPath expression syntax supported for matching topic expressions. <br/>
-							The following TopicExpressionDialects are mandatory for an ONVIF compliant device (see Section 15.7.3):
+							The following TopicExpressionDialects are mandatory for an ONVIF compliant device :
 							<ul type="disc">
 										<li>http://docs.oasis-open.org/wsn/t-1/TopicExpression/Concrete</li>
 										<li>http://www.onvif.org/ver10/tev/topicExpression/ConcreteSet.</li>
@@ -229,10 +243,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 							<xs:annotation>
 								<xs:documentation>
 						Defines the XPath function set supported for message content filtering.<br/> 
-						The following MessageContentFilterDialects are mandatory for an ONVIF compliant device(see Section 15.5.5):
+						The following MessageContentFilterDialects should be returned if a device supports the message content filtering:
 							<ul type="disc">
 										<li>http://www.onvif.org/ver10/tev/messageContentFilter/ItemFilter.</li>
 									</ul>
+						A device that does not support any MessageContentFilterDialect returns a single empty url.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -245,7 +260,7 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 						<xs:element name="MessageContentSchemaLocation" type="xs:anyURI" minOccurs="1" maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>
-							The Message Content Description Language, introduced in Section 15.5.4, allows referencing
+							The Message Content Description Language allows referencing
 							of vendor-specific types. In order to ease the integration of such types into a client application,
 							the GetEventPropertiesResponse shall list all URI locations to schema files whose types are
 							used in the description of notifications, with MessageContentSchemaLocation elements.<br/> 
@@ -260,6 +275,17 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<!--===============================-->
+			<xs:complexType name="SubscriptionPolicy">
+				<xs:annotation><xs:documentation>Optional ONVIF defined pull point subscription policies</xs:documentation></xs:annotation>
+				<xs:sequence>
+					<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="ChangedOnly" type="xs:boolean">
+					<xs:annotation><xs:documentation>The pullpoint should not provide Initialized nor Deleted events for Properties.</xs:documentation></xs:annotation>
+				</xs:attribute>
+				<xs:anyAttribute processContents="lax"/>
+			</xs:complexType>
 			<!--===============================-->
 		</xs:schema>
 	</wsdl:types>
@@ -283,6 +309,12 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 	</wsdl:message>
 	<wsdl:message name="PullMessagesFaultResponse">
 		<wsdl:part name="parameters" element="tev:PullMessagesFaultResponse"/>
+	</wsdl:message>
+	<wsdl:message name="SeekRequest">
+		<wsdl:part name="parameters" element="tev:Seek"/>
+	</wsdl:message>
+	<wsdl:message name="SeekResponse">
+		<wsdl:part name="parameters" element="tev:SeekResponse"/>
 	</wsdl:message>
 	<wsdl:message name="SetSynchronizationPointRequest">
 		<wsdl:part name="parameters" element="tev:SetSynchronizationPoint"/>
@@ -345,12 +377,25 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:output message="tev:PullMessagesResponse" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/PullMessagesResponse"/>
 			<wsdl:fault name="PullMessagesFaultResponse" message="tev:PullMessagesFaultResponse" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/PullMessages/Fault/PullMessagesFaultResponse"/>
 		</wsdl:operation>
+		<wsdl:operation name="Seek">
+			<wsdl:documentation>
+				This method readjusts the pull pointer into the past.
+				A device supporting persistent notification storage shall provide the
+				following Seek command for all SubscriptionManager endpoints returned by
+				the CreatePullPointSubscription command. The optional Reverse argument can
+				be used to reverse the pull direction of the PullMessages command.<br/>
+				The UtcTime argument will be matched against the UtcTime attribute on a
+				NotificationMessage.
+			</wsdl:documentation>
+			<wsdl:input message="tev:SeekRequest" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SeekRequest"/>
+			<wsdl:output message="tev:SeekResponse" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SeekResponse"/>
+		</wsdl:operation>
 		<wsdl:operation name="SetSynchronizationPoint">
 			<wsdl:documentation>Properties inform a client about property creation, changes and
 				deletion in a uniform way. When a client wants to synchronize its properties with the
 				properties of the device, it can request a synchronization point which repeats the current
 				status of all properties to which a client has subscribed. The PropertyOperation of all
-				produced notifications is set to “Initialized” (see Section 15.5). The Synchronization Point is
+				produced notifications is set to “Initialized”. The Synchronization Point is
 				requested directly from the SubscriptionManager which was returned in either the
 				SubscriptionResponse or in the CreatePullPointSubscriptionResponse. The property update is
 				transmitted via the notification transportation of the notification interface. This method is mandatory.
@@ -358,63 +403,6 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:input message="tev:SetSynchronizationPointRequest" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SetSynchronizationPointRequest"/>
 			<wsdl:output message="tev:SetSynchronizationPointResponse" wsaw:Action="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SetSynchronizationPointResponse"/>
 		</wsdl:operation>
-		
-	<!-- from bw-2.wsdl -->	
-      <wsdl:operation name="Renew">
-         <wsdl:input  name="RenewRequest" 
-                      message="wsntw:RenewRequest" />
-         <wsdl:output name="RenewResponse" 
-                      message="wsntw:RenewResponse" />
-         <wsdl:fault  name="ResourceUnknownFault" 
-                      message="wsrf-rw:ResourceUnknownFault" />
-         <wsdl:fault  name="UnacceptableTerminationTimeFault" 
-                      message=
-                      "wsntw:UnacceptableTerminationTimeFault" />     
-      </wsdl:operation>
-      <wsdl:operation name="Unsubscribe">
-         <wsdl:input  name="UnsubscribeRequest" 
-                      message="wsntw:UnsubscribeRequest" />
-         <wsdl:output name="UnsubscribeResponse" 
-                      message="wsntw:UnsubscribeResponse" />
-         <wsdl:fault  name="ResourceUnknownFault" 
-                      message="wsrf-rw:ResourceUnknownFault" />
-         <wsdl:fault  name="UnableToDestroySubscriptionFault" 
-                      message=
-                      "wsntw:UnableToDestroySubscriptionFault" />     
-      </wsdl:operation>
-	<wsdl:operation name="Notify">
-		<wsdl:input message="wsntw:Notify" />
-	</wsdl:operation>
-      <wsdl:operation name="Subscribe">
-         <wsdl:input  message="wsntw:SubscribeRequest" />
-         <wsdl:output message="wsntw:SubscribeResponse" />
-         <wsdl:fault  name="ResourceUnknownFault" 
-                      message="wsrf-rw:ResourceUnknownFault" />
-         <wsdl:fault  name="InvalidFilterFault" 
-                   message="wsntw:InvalidFilterFault"/>
-         <wsdl:fault  name="TopicExpressionDialectUnknownFault" 
-                   message="wsntw:TopicExpressionDialectUnknownFault"/>
-         <wsdl:fault  name="InvalidTopicExpressionFault" 
-                      message="wsntw:InvalidTopicExpressionFault" />
-         <wsdl:fault  name="TopicNotSupportedFault" 
-                      message="wsntw:TopicNotSupportedFault" />
-         <wsdl:fault  name="InvalidProducerPropertiesExpressionFault" 
-             message="wsntw:InvalidProducerPropertiesExpressionFault"/>
-         <wsdl:fault  name="InvalidMessageContentExpressionFault" 
-             message="wsntw:InvalidMessageContentExpressionFault"/>
-         <wsdl:fault  name="UnacceptableInitialTerminationTimeFault" 
-             message="wsntw:UnacceptableInitialTerminationTimeFault"/>
-         <wsdl:fault  name="UnrecognizedPolicyRequestFault" 
-             message="wsntw:UnrecognizedPolicyRequestFault"/>
-         <wsdl:fault  name="UnsupportedPolicyRequestFault" 
-             message="wsntw:UnsupportedPolicyRequestFault"/>
-         <wsdl:fault  name="NotifyMessageNotSupportedFault" 
-             message="wsntw:NotifyMessageNotSupportedFault"/>
-         <wsdl:fault  name="SubscribeCreationFailedFault" 
-                      message="wsntw:SubscribeCreationFailedFault"/>
-      </wsdl:operation>	
-	<!-- -->	
-		
 	</wsdl:portType>
 	<wsdl:binding name="PullPointSubscriptionBinding" type="tev:PullPointSubscription">
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -429,6 +417,15 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			<wsdl:fault name="PullMessagesFaultResponse">
 				<soap:fault name="PullMessagesFaultResponse" use="literal"/>
 			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="Seek">
+			<soap:operation soapAction="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SeekRequest"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="SetSynchronizationPoint">
 			<soap:operation soapAction="http://www.onvif.org/ver10/events/wsdl/PullPointSubscription/SetSynchronizationPointRequest"/>

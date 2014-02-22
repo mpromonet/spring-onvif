@@ -10,8 +10,8 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:trt="http://www.onvif.org/ver10/media/wsdl" targetNamespace="http://www.onvif.org/ver10/media/wsdl">
 	<wsdl:types>
-		<xs:schema targetNamespace="http://www.onvif.org/ver10/media/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.2">
-			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="http://www.onvif.org/ver10/schema/onvif.xsd"/>
+		<xs:schema targetNamespace="http://www.onvif.org/ver10/media/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.4.1">
+			<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../../../ver10/schema/onvif.xsd"/>
 			<!--  Message Request/Responses elements  -->
 			<!--===============================-->
 			<xs:element name="GetServiceCapabilities">
@@ -55,6 +55,16 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 						<xs:documentation>Indicates whether or not Rotation feature is supported.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
+				<xs:attribute name="VideoSourceMode" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Indicates the support for changing video source mode.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="OSD" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Indicates if OSD is supported.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
 			</xs:complexType>
 			<xs:element name="Capabilities" type="trt:Capabilities"/>
@@ -93,6 +103,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 				<xs:attribute name="NonAggregateControl" type="xs:boolean">
 					<xs:annotation>
 						<xs:documentation>Indicates support for non aggregate RTSP control.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="NoRTSPStreaming" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation> Indicates the device does not support live media streaming via RTSP.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
@@ -1152,7 +1167,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1175,7 +1190,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1198,7 +1213,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1221,7 +1236,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1244,7 +1259,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1267,7 +1282,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1291,7 +1306,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1314,7 +1329,7 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 						</xs:element>
 						<xs:element name="ForcePersistence" type="xs:boolean">
 							<xs:annotation>
-								<xs:documentation>Determines if the configuration changes shall be stored and remain after reboot. If true, changes shall be persistent. If false, changes MAY revert to previous values after reboot.</xs:documentation>
+								<xs:documentation>The ForcePersistence element is obsolete and should always be assumed to be true.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 					</xs:sequence>
@@ -1661,7 +1676,253 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<!--================ Video Source Mode ===============-->
+			<xs:element name="GetVideoSourceModes">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VideoSourceToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>Contains a video source reference for which a video source mode is requested.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetVideoSourceModesResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VideoSourceModes" type="trt:VideoSourceMode" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Return the information for specified video source mode.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<!--===============================-->
+			<xs:element name="SetVideoSourceMode">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="VideoSourceToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>Contains a video source reference for which a video source mode is requested.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="VideoSourceModeToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>Indicate video source mode.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SetVideoSourceModeResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Reboot" type="xs:boolean">
+							<xs:annotation>
+								<xs:documentation>The response contains information about rebooting after returning response. When Reboot is set true, a device will reboot automatically after setting mode.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:simpleType name="EncodingTypes">
+				<xs:annotation>
+					<xs:documentation>Indication which encodings are supported for this video source. The list may contain one or more enumeration values of tt:VideoEncoding.</xs:documentation>
+				</xs:annotation>
+				<xs:list itemType="xs:string"/>
+			</xs:simpleType>
+			<!--===============================-->
+			<xs:complexType name="VideoSourceMode"> 
+				<xs:sequence>
+					<xs:element name="MaxFramerate" type="xs:float">
+						<xs:annotation>
+							<xs:documentation>Max frame rate in frames per second for this video source mode.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MaxResolution" type="tt:VideoResolution">
+						<xs:annotation>
+							<xs:documentation>Max horizontal and vertical resolution for this video source mode.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Encodings" type="trt:EncodingTypes">
+						<xs:annotation>
+							<xs:documentation>Indication which encodings are supported for this video source. The list may contain one or more enumeration values of tt:VideoEncoding.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Reboot" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>After setting the mode if a device starts to reboot this value is true. If a device change the mode without rebooting this value is false. If true, configured parameters may not be guaranteed by the device after rebooting.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Description" type="tt:Description" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Informative description of this video source mode. This field should be described in English.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Extension" type="trt:VideoSourceModeExtension" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="token" type="tt:ReferenceToken" use="required">
+					<xs:annotation>
+						<xs:documentation>Indicate token for video source mode.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Enabled" type="xs:boolean"> 
+					<xs:annotation>
+						<xs:documentation>Indication of whether this mode is active. If active this value is true. In case of non-indication, it means as false. The value of true shall be had by only one video source mode.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:anyAttribute processContents="lax"/>
+			</xs:complexType>
+			<!--===============================-->
+			<xs:complexType name="VideoSourceModeExtension"> 
+				<xs:sequence>
+					<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<!--===============================-->
+			<!--============OSD Schema Begin================-->
+			<xs:element name="GetOSDs">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ConfigurationToken" type="tt:ReferenceToken" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>Token of the Video Source Configuration, which has OSDs associated with are requested. If token not exist, request all available OSDs.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetOSDsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSDs" type="tt:OSDConfiguration" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>This element contains a list of requested OSDs.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:element name="GetOSD">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSDToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>The GetOSD command fetches the OSD configuration if the OSD token is known.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetOSDResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSD" type="tt:OSDConfiguration">
+							<xs:annotation>
+								<xs:documentation>The requested OSD configuration.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:element name="SetOSD">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSD" type="tt:OSDConfiguration">
+							<xs:annotation>
+								<xs:documentation>Contains the modified OSD configuration.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SetOSDResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:element name="GetOSDOptions">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ConfigurationToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>Video Source Configuration Token that specifies an existing video source configuration that the options shall be compatible with.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetOSDOptionsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSDOptions" type="tt:OSDConfigurationOptions">
+							<xs:annotation>
+								<xs:documentation/>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:element name="CreateOSD">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSD" type="tt:OSDConfiguration">
+							<xs:annotation>
+								<xs:documentation>Contain the initial OSD configuration for create.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CreateOSDResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSDToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>Returns Token of the newly created OSD</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--===============================-->
+			<xs:element name="DeleteOSD">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OSDToken" type="tt:ReferenceToken">
+							<xs:annotation>
+								<xs:documentation>This element contains a reference to the OSD configuration that should be deleted.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeleteOSDResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!--============OSD Schema End================-->
 		</xs:schema>
 	</wsdl:types>
 	<wsdl:message name="GetServiceCapabilitiesRequest">
@@ -2090,6 +2351,54 @@ AudioOutputConfiguration shall be removed.</xs:documentation>
 	<wsdl:message name="GetSnapshotUriResponse">
 		<wsdl:part name="parameters" element="trt:GetSnapshotUriResponse"/>
 	</wsdl:message>
+	<wsdl:message name="GetVideoSourceModesRequest">
+		<wsdl:part name="parameters" element="trt:GetVideoSourceModes"/>
+	</wsdl:message>
+	<wsdl:message name="GetVideoSourceModesResponse">
+		<wsdl:part name="parameters" element="trt:GetVideoSourceModesResponse"/>
+	</wsdl:message>
+	<wsdl:message name="SetVideoSourceModeRequest">
+		<wsdl:part name="parameters" element="trt:SetVideoSourceMode"/>
+	</wsdl:message>
+	<wsdl:message name="SetVideoSourceModeResponse">
+		<wsdl:part name="parameters" element="trt:SetVideoSourceModeResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetOSDsRequest">
+		<wsdl:part name="parameters" element="trt:GetOSDs"/>
+	</wsdl:message>
+	<wsdl:message name="GetOSDsResponse">
+		<wsdl:part name="parameters" element="trt:GetOSDsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetOSDRequest">
+		<wsdl:part name="parameters" element="trt:GetOSD"/>
+	</wsdl:message>
+	<wsdl:message name="GetOSDResponse">
+		<wsdl:part name="parameters" element="trt:GetOSDResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetOSDOptionsRequest">
+		<wsdl:part name="parameters" element="trt:GetOSDOptions"/>
+	</wsdl:message>
+	<wsdl:message name="GetOSDOptionsResponse">
+		<wsdl:part name="parameters" element="trt:GetOSDOptionsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="SetOSDRequest">
+		<wsdl:part name="parameters" element="trt:SetOSD"/>
+	</wsdl:message>
+	<wsdl:message name="SetOSDResponse">
+		<wsdl:part name="parameters" element="trt:SetOSDResponse"/>
+	</wsdl:message>
+	<wsdl:message name="CreateOSDRequest">
+		<wsdl:part name="parameters" element="trt:CreateOSD"/>
+	</wsdl:message>
+	<wsdl:message name="CreateOSDResponse">
+		<wsdl:part name="parameters" element="trt:CreateOSDResponse"/>
+	</wsdl:message>
+	<wsdl:message name="DeleteOSDRequest">
+		<wsdl:part name="parameters" element="trt:DeleteOSD"/>
+	</wsdl:message>
+	<wsdl:message name="DeleteOSDResponse">
+		<wsdl:part name="parameters" element="trt:DeleteOSDResponse"/>
+	</wsdl:message>
 	<wsdl:portType name="Media">
 		<!--===============================-->
 		<!--===============================-->
@@ -2137,8 +2446,10 @@ know the media profile in order to use the command.</wsdl:documentation>
 		</wsdl:operation>
 		<wsdl:operation name="AddVideoEncoderConfiguration">
 			<wsdl:documentation>This operation adds a VideoEncoderConfiguration to an existing media profile. If a
-configuration exists in the media profile, it will be replaced. The change shall be persistent. Adding a VideoEncoderConfiguration to a Profile means that a stream using that Profile will
-contain video data. Video encoder configurations should be added after adding a video source configuration.</wsdl:documentation>
+configuration exists in the media profile, it will be replaced. The change shall be persistent. A device shall
+support adding a compatible VideoEncoderConfiguration to a Profile containing a VideoSourceConfiguration and shall
+support streaming video data of such a profile.
+			</wsdl:documentation>
 			<wsdl:input message="trt:AddVideoEncoderConfigurationRequest"/>
 			<wsdl:output message="trt:AddVideoEncoderConfigurationResponse"/>
 		</wsdl:operation>
@@ -2162,7 +2473,11 @@ VideoEncoderConfiguration from the media profile.</wsdl:documentation>
 			<wsdl:output message="trt:RemoveVideoSourceConfigurationResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="AddAudioEncoderConfiguration">
-			<wsdl:documentation>This operation adds an AudioEncoderConfiguration to an existing media profile. If a configuration exists in the media profile, it will be replaced. The change shall be persistent. Adding an AudioEncoderConfiguration to a media profile means that streams using that media profile will contain audio data. Audio encoder configurations should be added after adding an audio source configuration.</wsdl:documentation>
+			<wsdl:documentation>This operation adds an AudioEncoderConfiguration to an existing media profile. If a 
+configuration exists in the media profile, it will be replaced. The change shall be persistent. A device shall
+support adding a compatible AudioEncoderConfiguration to a profile containing an AudioSourceConfiguration and shall
+support streaming audio data of such a profile.
+			</wsdl:documentation>
 			<wsdl:input message="trt:AddAudioEncoderConfigurationRequest"/>
 			<wsdl:output message="trt:AddAudioEncoderConfigurationResponse"/>
 		</wsdl:operation>
@@ -2559,6 +2874,48 @@ image will be updated automatically and independent from calls to GetSnapshotUri
 			<wsdl:input message="trt:GetSnapshotUriRequest"/>
 			<wsdl:output message="trt:GetSnapshotUriResponse"/>
 		</wsdl:operation>
+		<wsdl:operation name="GetVideoSourceModes">
+			<wsdl:documentation>A device returns the information for current video source mode and settable video source modes of specified video source. A device that indicates a capability of  VideoSourceModes shall support this command.</wsdl:documentation>
+			<wsdl:input message="trt:GetVideoSourceModesRequest"/>
+			<wsdl:output message="trt:GetVideoSourceModesResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="SetVideoSourceMode">
+			<wsdl:documentation>SetVideoSourceMode changes the media profile structure relating to video source for the specified video source mode. A device that indicates a capability of VideoSourceModes shall support this command. The behavior after changing the mode is not defined in this specification.</wsdl:documentation>
+			<wsdl:input message="trt:SetVideoSourceModeRequest"/>
+			<wsdl:output message="trt:SetVideoSourceModeResponse"/>
+		</wsdl:operation>
+		<!--==============OSD Operation Begin=================-->
+		<wsdl:operation name="GetOSDs">
+			<wsdl:documentation>Get the OSDs.</wsdl:documentation>
+			<wsdl:input message="trt:GetOSDsRequest"/>
+			<wsdl:output message="trt:GetOSDsResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetOSD">
+			<wsdl:documentation>Get the OSD.</wsdl:documentation>
+			<wsdl:input message="trt:GetOSDRequest"/>
+			<wsdl:output message="trt:GetOSDResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetOSDOptions">
+			<wsdl:documentation>Get the OSD Options.</wsdl:documentation>
+			<wsdl:input message="trt:GetOSDOptionsRequest"/>
+			<wsdl:output message="trt:GetOSDOptionsResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="SetOSD">
+			<wsdl:documentation>Set the OSD</wsdl:documentation>
+			<wsdl:input message="trt:SetOSDRequest"/>
+			<wsdl:output message="trt:SetOSDResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateOSD">
+			<wsdl:documentation>Create the OSD.</wsdl:documentation>
+			<wsdl:input message="trt:CreateOSDRequest"/>
+			<wsdl:output message="trt:CreateOSDResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteOSD">
+			<wsdl:documentation>Delete the OSD.</wsdl:documentation>
+			<wsdl:input message="trt:DeleteOSDRequest"/>
+			<wsdl:output message="trt:DeleteOSDResponse"/>
+		</wsdl:operation>
+		<!--==============OSD Operation End=================-->
 	</wsdl:portType>
 	<wsdl:binding name="MediaBinding" type="trt:Media">
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -3245,5 +3602,81 @@ image will be updated automatically and independent from calls to GetSnapshotUri
 			</wsdl:output>
 		</wsdl:operation>
 		<!--===============================-->
+		<wsdl:operation name="GetVideoSourceModes">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/GetVideoSourceModes"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<!--===============================-->
+		<wsdl:operation name="SetVideoSourceMode">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/SetVideoSourceMode"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<!--===============================-->
+		<!--==============OSD Operation Begin=================-->
+		<wsdl:operation name="GetOSDs">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/GetOSDs"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetOSD">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/GetOSD"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetOSDOptions">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/GetOSDOptions"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SetOSD">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/SetOSD"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="CreateOSD">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/CreateOSD"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteOSD">
+			<soap:operation soapAction="http://www.onvif.org/ver10/media/wsdl/DeleteOSD"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<!--==============OSD Operation End=================-->
 	</wsdl:binding>
 </wsdl:definitions>
