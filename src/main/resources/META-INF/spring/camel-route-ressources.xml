@@ -84,20 +84,36 @@
 			<setBody><simple>${ref:profile}</simple></setBody>
 			<to uri="mock:getProfile" />
 		</route>	
-		<route>
-			<from uri="direct:getAdminUser" />
-			<setBody><simple>${ref:AdminUser}</simple></setBody>
-			<to uri="mock:getAdminUser" />
-		</route>		
-		
 
 		<route>
 			<from uri="direct:createUserTable" />
+			<!-- save body-->
 			<setHeader headerName="body"><simple>${body}</simple></setHeader>
+			
+			<!-- create table if not exists -->
 			<setBody>
 				<constant>create table if not exists USERS(id varchar primary key not null, msg varchar)</constant>
 			</setBody>
 			<to uri="jdbc:dataSource"/>    
+			
+			<!-- append admin user if not exists -->
+			<setBody><simple>${ref:AdminUser}</simple></setBody>
+			<setHeader headerName="adminname"><simple>${body.username}</simple></setHeader>
+                        <setBody>
+                                <groovy>
+                                        def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
+                                        def result = new java.io.StringWriter();
+                                        def marshaller = jaxbCtx.createMarshaller();
+                                        marshaller.marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("org.onvif.ver10.schema","User"), request.getBody().class, request.getBody()),result);
+                                        result;
+                                </groovy>
+                        </setBody>
+			<setBody>
+				<simple>merge into USERS values('${header.adminname}','${body}')</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>    
+
+			<!-- restore body-->
 			<setBody><simple>${header.body}</simple></setBody>
 			<to uri="mock:dataSource"/>    
 		</route>		
@@ -110,6 +126,7 @@
 			</setBody>
 			<to uri="jdbc:dataSource"/>     		
 		</route>		
+		
 		<route>
 			<from uri="direct:addUser" />
 			<to uri="direct:createUserTable" />
@@ -118,6 +135,7 @@
 			</setBody>
 			<to uri="jdbc:dataSource"/>     		
 		</route>		
+		
 		<route>
 			<from uri="direct:delUser" />
 			<to uri="direct:createUserTable" />

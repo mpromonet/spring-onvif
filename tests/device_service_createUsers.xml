@@ -3,7 +3,7 @@
 <SOAP-ENV:Body>
 	<tds:CreateUsers>
 		<tds:User>
-			<tt:Username>admin</tt:Username>
+			<tt:Username>root</tt:Username>
 			<tt:UserLevel>Administrator</tt:UserLevel>
 		</tds:User>
 		<tds:User>
