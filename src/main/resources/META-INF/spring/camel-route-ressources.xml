@@ -78,12 +78,108 @@
 		<property name="userLevel"><util:constant static-field="org.onvif.ver10.schema.UserLevel.ADMINISTRATOR"/></property>
 	</bean> 
 
-	<routeContext id="RessourcesRoutes" xmlns="http://camel.apache.org/schema/spring">
+	<routeContext id="RessourcesRoutes" xmlns="http://camel.apache.org/schema/spring">	
+		<route>
+			<from uri="direct:marshalProfile" />
+                        <setBody>
+                                <groovy>
+                                        def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
+                                        def result = new java.io.StringWriter();
+                                        def marshaller = jaxbCtx.createMarshaller();
+                                        marshaller.marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("org.onvif.ver10.schema","Profile"), request.getBody().class, request.getBody()),result);
+                                        result;
+                                </groovy>
+                        </setBody>
+			<to uri="mock:marshalProfile"/>    
+		</route>
+
+		<route>
+			<from uri="direct:unmarshalProfileList" />
+                        <setBody>
+                                <groovy>
+					def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
+					def unmarshaller = jaxbCtx.createUnmarshaller();
+					def list = []
+					body.each(
+						{
+							def xmlStr = new java.lang.StringBuffer( it.get("MSG") );
+							def item = unmarshaller.unmarshal( new javax.xml.transform.stream.StreamSource( new java.io.StringReader( xmlStr.toString() ) ) ,  org.onvif.ver10.schema.Profile.class);						
+							list.add((org.onvif.ver10.schema.Profile)item.getValue());
+						}
+					);
+					list;
+                                </groovy>
+                        </setBody>
+			<to uri="mock:unmarshalProfileList"/>    
+		</route>
+
+		<route>
+			<from uri="direct:createProfileTable" />
+			<!-- save body-->
+			<setHeader headerName="body"><simple>${body}</simple></setHeader>
+			
+			<!-- create table if not exists -->
+			<setBody>
+				<constant>create table if not exists PROFILES(id varchar primary key not null, msg varchar)</constant>
+			</setBody>
+			<to uri="jdbc:dataSource"/>    
+			
+			<!-- append profile if not exists -->
+			<setBody><simple>${ref:profile}</simple></setBody>
+			<setHeader headerName="token"><simple>${body.token}</simple></setHeader>
+			<to uri="direct:marshalProfile"/>    
+			<setBody>
+				<simple>merge into PROFILES values('${header.token}','${body}')</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>    
+
+			<!-- restore body-->
+			<setBody><simple>${header.body}</simple></setBody>
+			<to uri="mock:dataSource"/>    
+		</route>		
 		<route>
 			<from uri="direct:getProfile" />
-			<setBody><simple>${ref:profile}</simple></setBody>
-			<to uri="mock:getProfile" />
+			<to uri="direct:createProfileTable" />
+			<setBody>
+				<constant>select * from PROFILES</constant>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     
+			<to uri="direct:unmarshalProfileList" />
 		</route>	
+
+		<route>
+			<from uri="direct:marshalUser" />
+                        <setBody>
+                                <groovy>
+                                        def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
+                                        def result = new java.io.StringWriter();
+                                        def marshaller = jaxbCtx.createMarshaller();
+                                        marshaller.marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("org.onvif.ver10.schema","User"), request.getBody().class, request.getBody()),result);
+                                        result;
+                                </groovy>
+                        </setBody>
+			<to uri="mock:marshalUser"/>    
+		</route>
+		
+		<route>
+			<from uri="direct:unmarshalUserList" />
+                        <setBody>
+                                <groovy>
+					def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
+					def unmarshaller = jaxbCtx.createUnmarshaller();
+					def list = []
+					body.each(
+						{
+							def xmlStr = new java.lang.StringBuffer( it.get("MSG") );
+							def item = unmarshaller.unmarshal( new javax.xml.transform.stream.StreamSource( new java.io.StringReader( xmlStr.toString() ) ) ,  org.onvif.ver10.schema.User.class);						
+							list.add((org.onvif.ver10.schema.User)item.getValue());
+						}
+					);
+					list;
+                                </groovy>
+                        </setBody>
+			<to uri="mock:unmarshalUserList"/>    
+		</route>		
 
 		<route>
 			<from uri="direct:createUserTable" />
@@ -99,15 +195,7 @@
 			<!-- append admin user if not exists -->
 			<setBody><simple>${ref:AdminUser}</simple></setBody>
 			<setHeader headerName="adminname"><simple>${body.username}</simple></setHeader>
-                        <setBody>
-                                <groovy>
-                                        def jaxbCtx = javax.xml.bind.JAXBContext.newInstance("org.onvif.ver10.schema");
-                                        def result = new java.io.StringWriter();
-                                        def marshaller = jaxbCtx.createMarshaller();
-                                        marshaller.marshal(new javax.xml.bind.JAXBElement(new javax.xml.namespace.QName("org.onvif.ver10.schema","User"), request.getBody().class, request.getBody()),result);
-                                        result;
-                                </groovy>
-                        </setBody>
+			<to uri="direct:marshalUser"/>    
 			<setBody>
 				<simple>merge into USERS values('${header.adminname}','${body}')</simple>
 			</setBody>
@@ -117,7 +205,7 @@
 			<setBody><simple>${header.body}</simple></setBody>
 			<to uri="mock:dataSource"/>    
 		</route>		
-			
+
 		<route>
 			<from uri="direct:getUserList" />
 			<to uri="direct:createUserTable" />
@@ -125,6 +213,7 @@
 				<constant>select * from USERS</constant>
 			</setBody>
 			<to uri="jdbc:dataSource"/>     		
+			<to uri="direct:unmarshalUserList" />
 		</route>		
 		
 		<route>

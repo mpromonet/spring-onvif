@@ -9,11 +9,15 @@ println "==> " + req.getProfileToken()
 response = new org.onvif.ver10.media.wsdl.GetProfileResponse();
 
 def template = context.createProducerTemplate();
-def profile=template.requestBody("direct:getProfile",null);
+def profileList=template.requestBody("direct:getProfile",null);
 
-if (req.getProfileToken() == profile.getToken())
-{
-	response.setProfile(profile);
-}
+profileList.each( 
+		{ 
+			if (req.getProfileToken() == it.getToken())
+			{
+				response.setProfile(it);
+			}
+		} 
+	);
 
 response;
