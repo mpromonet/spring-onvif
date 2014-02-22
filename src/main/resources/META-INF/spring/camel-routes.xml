@@ -66,8 +66,9 @@
 		<!--  servlet -->
 		<routeContextRef ref="ServletRoutes" />
 
-		<!--  servlet -->
-		<routeContextRef ref="RessourcesRoutes" />
+		<!--  ressources -->
+		<routeContextRef ref="ProfilesRessourcesRoutes" />
+		<routeContextRef ref="UsersRessourcesRoutes" />
 
 		<!--  log -->
 		<intercept>

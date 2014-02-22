@@ -9,7 +9,7 @@ def template = context.createProducerTemplate();
 req.getUsername().each( 
 	{ 
 		println "==> Username:" + it 
-		template.requestBodyAndHeader("direct:delUser",null,"username",it);
+		template.requestBody("direct:delUser",it);
 	} 
 );
 

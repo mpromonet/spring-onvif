@@ -78,7 +78,7 @@
 		<property name="userLevel"><util:constant static-field="org.onvif.ver10.schema.UserLevel.ADMINISTRATOR"/></property>
 	</bean> 
 
-	<routeContext id="RessourcesRoutes" xmlns="http://camel.apache.org/schema/spring">	
+	<routeContext id="ProfilesRessourcesRoutes" xmlns="http://camel.apache.org/schema/spring">	
 		<route>
 			<from uri="direct:marshalProfile" />
                         <setBody>
@@ -112,7 +112,6 @@
                         </setBody>
 			<to uri="mock:unmarshalProfileList"/>    
 		</route>
-
 		<route>
 			<from uri="direct:createProfileTable" />
 			<!-- save body-->
@@ -146,7 +145,28 @@
 			<to uri="jdbc:dataSource"/>     
 			<to uri="direct:unmarshalProfileList" />
 		</route>	
-
+		<route>
+			<from uri="direct:addProfile" />
+			<to uri="direct:createProfileTable" />
+			<setHeader headerName="token"><simple>${body.token}</simple></setHeader>
+			<to uri="direct:marshalProfile"/>    
+			<setBody>
+				<simple>insert into PROFILES values('${header.token}','${body}')</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     		
+		</route>		
+		<route>
+			<from uri="direct:delProfile" />
+			<to uri="direct:createProfileTable" />
+			<setBody>
+				<simple>delete from PROFILES where id='${body}'</simple>
+			</setBody>
+			<to uri="jdbc:dataSource"/>     		
+		</route>		
+	</routeContext>
+	
+	
+	<routeContext id="UsersRessourcesRoutes" xmlns="http://camel.apache.org/schema/spring">	
 		<route>
 			<from uri="direct:marshalUser" />
                         <setBody>
@@ -229,7 +249,7 @@
 			<from uri="direct:delUser" />
 			<to uri="direct:createUserTable" />
 			<setBody>
-				<simple>delete from USERS where id='${header.username}'</simple>
+				<simple>delete from USERS where id='${body}'</simple>
 			</setBody>
 			<to uri="jdbc:dataSource"/>     		
 		</route>		
