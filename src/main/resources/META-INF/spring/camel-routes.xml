@@ -63,6 +63,12 @@
 		<!--  display.wsdl -->
 		<routeContextRef ref="DisplayRoutes" />
 
+		<!--  doorcontrol.wsdl -->
+		<routeContextRef ref="DoorControlServiceRoutes" />
+		
+		<!-- accescontrol.wsdl -->
+		<routeContextRef ref="PACSServiceRoutes" />
+
 		<!--  servlet -->
 		<routeContextRef ref="ServletRoutes" />
 

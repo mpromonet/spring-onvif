@@ -46,6 +46,7 @@
 	<camelcxf:cxfEndpoint id="CxfSubscriptionManager" address="/SubscriptionManager" serviceClass="org.oasis_open.docs.wsn.bw_2.SubscriptionManager">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -57,6 +58,7 @@
 	<camelcxf:cxfEndpoint id="CxfPullPointSubscription" address="/PullPointSubscription" serviceClass="org.onvif.ver10.events.wsdl.PullPointSubscription">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -80,6 +82,7 @@
 	<camelcxf:cxfEndpoint id="CxfEventPortType" address="/EventPortType" serviceClass="org.onvif.ver10.events.wsdl.EventPortType">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -99,6 +102,7 @@
 	<camelcxf:cxfEndpoint id="CxfDiscoveryLookupPort" address="/DiscoveryLookupPort" serviceClass="org.onvif.ver10.network.wsdl.DiscoveryLookupPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -114,6 +118,7 @@
 	<camelcxf:cxfEndpoint id="CxfRemoteDiscoveryPort" address="/RemoteDiscoveryPort" serviceClass="org.onvif.ver10.network.wsdl.RemoteDiscoveryPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -130,6 +135,7 @@
 	<camelcxf:cxfEndpoint id="CxfDeviceIOPort" address="/DeviceIO" serviceClass="org.onvif.ver10.deviceio.wsdl.DeviceIOPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -147,6 +153,7 @@
 	<camelcxf:cxfEndpoint id="CxfMedia" address="/Media" serviceClass="org.onvif.ver10.media.wsdl.Media">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    		
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -163,6 +170,7 @@
 	<camelcxf:cxfEndpoint id="CxfPTZ" address="/PTZ" serviceClass="org.onvif.ver20.ptz.wsdl.PTZ">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -179,6 +187,7 @@
 	<camelcxf:cxfEndpoint id="CxfImagingPort" address="/ImagingPort" serviceClass="org.onvif.ver20.imaging.wsdl.ImagingPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -197,6 +206,7 @@
 	<camelcxf:cxfEndpoint id="CxfRecordingPort" address="/Recording" serviceClass="org.onvif.ver10.recording.wsdl.RecordingPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -213,6 +223,7 @@
 	<camelcxf:cxfEndpoint id="CxfReplay" address="/Replay" serviceClass="org.onvif.ver10.replay.wsdl.ReplayPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -230,6 +241,7 @@
 	<camelcxf:cxfEndpoint id="CxfReceiver" address="/Receiver" serviceClass="org.onvif.ver10.receiver.wsdl.ReceiverPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -246,6 +258,7 @@
 	<camelcxf:cxfEndpoint id="CxfSearch" address="/Search" serviceClass="org.onvif.ver10.search.wsdl.SearchPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -263,6 +276,7 @@
 	<camelcxf:cxfEndpoint id="CxfDisplay" address="/Display" serviceClass="org.onvif.ver10.display.wsdl.DisplayPort">
 		<camelcxf:properties>
 			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
 		</camelcxf:properties>    	
 		<camelcxf:binding> 
 			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
@@ -274,6 +288,40 @@
 			<to uri="direct:SoapProcessor" />
 		</route>
 	</routeContext>	
-	
+
+	<!-- access -->
+	<!-- doorcontrol.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfDoorControlService" address="/DoorControlPort" serviceClass="org.onvif.ver10.doorcontrol.wsdl.DoorControlPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="DoorControlServiceRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="DoorControlService" autoStartup="{{service.display.enabled}}">
+			<from uri="cxf:bean:CxfDoorControlService" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+	<!-- accescontrol.wsdl -->
+	<camelcxf:cxfEndpoint id="CxfPACSService" address="/PACSPort" serviceClass="org.onvif.ver10.accesscontrol.wsdl.PACSPort">
+		<camelcxf:properties>
+			<entry key="dataFormat" value="PAYLOAD"/>
+			<entry key="ws-discovery-disable" value="true"/>
+		</camelcxf:properties>    	
+		<camelcxf:binding> 
+			<soap:soapBinding mtomEnabled="${soap.mtomEnabled}" version="${soap.binding}"/> 
+		</camelcxf:binding> 
+	</camelcxf:cxfEndpoint>
+	<routeContext id="PACSServiceRoutes" xmlns="http://camel.apache.org/schema/spring">
+		<route id="PACSService" autoStartup="{{service.display.enabled}}">
+			<from uri="cxf:bean:CxfPACSService" />
+			<to uri="direct:SoapProcessor" />
+		</route>
+	</routeContext>	
+
 	
 </beans>
