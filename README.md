@@ -1,3 +1,5 @@
+[![Build status](https://travis-ci.org/mpromonet/spring-onvif.svg)](https://travis-ci.org/mpromonet/spring-onvif)
+
 Spring-ONVIF
 ========
 The aim is to try to implement ONVIF services in a flexible way and to learn a bit more about what could do Apache Camel.  
