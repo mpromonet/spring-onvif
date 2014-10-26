@@ -2,9 +2,9 @@ language: java
 script: mvn install
 deploy:
   provider: openshift
-  user: mpromonet
+  user: michel.promonet@free.fr
   password:
-    secure: DCW76G4WQQFzN0OfS8z5iMv2MVMlrui0JXRpKu2gI2xKQf+mS63VHv2m6BNksoqiH8J4C42yxAea4l+CVU+XOWXLU146r9AjYi2PUyE/XtV8b28q3m0qQ4DG4bu8U3GzCh7rUU5Erm8Pc6F0HnjIr376s60a4Um8bc8Mi7MjAp4=
+    secure: CZ1yeJ8xb21feBF/kTCjsXMAVFTkKZsIATMDg15UCfnx8mn/BFyz/2G5pK3HR0oRU686mnMr5TkAzOW4LRr9xnFA1+cNomgvLa1Dw9UWQacQIGfH2fd7P0C12rjpeWfi8XpEsfr09HqND/QO0npDivOSFenBrDF0b3d78p26ABM=
   app: spring-onvif
   domain: mpromonet
   on:
