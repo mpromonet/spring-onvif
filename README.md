@@ -27,7 +27,7 @@ Domain public.
 
 Links
 ------------
-- Packaged Application (http://repository-mpr.forge.cloudbees.com/snapshot/spring/onvif/1.0-SNAPSHOT/)
-- Running Application (http://spring-onvif.mpr.cloudbees.net)
+- Running Application (https://spring-onvif.herokuapp.com/)
+- Travis CI (https://travis-ci.org/mpromonet/spring-onvif)
 - Maven Site (http://mpromonet.github.com/spring-onvif)
-- Jenkins CI (https://mpr.ci.cloudbees.com/job/spring-onvif)
+- Packaged Application (http://repository-mpr.forge.cloudbees.com/snapshot/spring/onvif/1.0-SNAPSHOT/)
