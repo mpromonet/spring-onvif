@@ -4,8 +4,6 @@ deploy:
   provider: openshift
   user: michel.promonet@free.fr
   password:
-    secure: CZ1yeJ8xb21feBF/kTCjsXMAVFTkKZsIATMDg15UCfnx8mn/BFyz/2G5pK3HR0oRU686mnMr5TkAzOW4LRr9xnFA1+cNomgvLa1Dw9UWQacQIGfH2fd7P0C12rjpeWfi8XpEsfr09HqND/QO0npDivOSFenBrDF0b3d78p26ABM=
-  app: springonvif
+    secure: H/SxXBkXDJqlqdxjDchqYrc1iMpwMxqkv57xP/8F1ScBzyM82WkAC5t05qqjFnpZgIqa6qjWoXp83MvRoYX6B5bUUZaWHctG1dLTDr89UBLHjAQHnQCCAdcgqZ4yq92qCx4m7NwrqzMSC37LgpUhjswk6IAWlMPhqoH0IoxoSg0=
+  app: onvif
   domain: mpromonet
-  on:
-    repo: mpromonet/spring-onvif
