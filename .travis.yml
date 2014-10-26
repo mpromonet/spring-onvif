@@ -5,7 +5,7 @@ deploy:
   user: michel.promonet@free.fr
   password:
     secure: CZ1yeJ8xb21feBF/kTCjsXMAVFTkKZsIATMDg15UCfnx8mn/BFyz/2G5pK3HR0oRU686mnMr5TkAzOW4LRr9xnFA1+cNomgvLa1Dw9UWQacQIGfH2fd7P0C12rjpeWfi8XpEsfr09HqND/QO0npDivOSFenBrDF0b3d78p26ABM=
-  app: spring-onvif
+  app: springonvif
   domain: mpromonet
   on:
     repo: mpromonet/spring-onvif
