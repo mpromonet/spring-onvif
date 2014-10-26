@@ -1,11 +1,7 @@
-language: java
-script: mvn install
-after_success:
-  - cp target/*.war webapps/ 
 deploy:
-  provider: openshift
-  user: michel.promonet@free.fr
-  password:
-    secure: H/SxXBkXDJqlqdxjDchqYrc1iMpwMxqkv57xP/8F1ScBzyM82WkAC5t05qqjFnpZgIqa6qjWoXp83MvRoYX6B5bUUZaWHctG1dLTDr89UBLHjAQHnQCCAdcgqZ4yq92qCx4m7NwrqzMSC37LgpUhjswk6IAWlMPhqoH0IoxoSg0=
-  app: onvif
-  domain: mpromonet
+  provider: heroku
+  api_key:
+    secure: bJloLs6wbKIoCIfBol6vQo1HDn62tO1M/seRgZSWoWNstd77N8ivQc/ibq9twmrCNcuVAFJ9LrPOQ2QFXL7xiE8xpXS9qBuQ+6ZfGZ4KZ0uTMo96kU8dR1d7WB17X3zuhWASdlzXMuJ3isBusu+PFPYZ+iklb10kzEjFNGWOPVk=
+  app: spring-onvif
+  on:
+    repo: mpromonet/spring-onvif
