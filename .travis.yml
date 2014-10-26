@@ -1,2 +1,11 @@
 language: java
 script: mvn install
+deploy:
+  provider: openshift
+  user: mpromonet
+  password:
+    secure: DCW76G4WQQFzN0OfS8z5iMv2MVMlrui0JXRpKu2gI2xKQf+mS63VHv2m6BNksoqiH8J4C42yxAea4l+CVU+XOWXLU146r9AjYi2PUyE/XtV8b28q3m0qQ4DG4bu8U3GzCh7rUU5Erm8Pc6F0HnjIr376s60a4Um8bc8Mi7MjAp4=
+  app: spring-onvif
+  domain: mpromonet
+  on:
+    repo: mpromonet/spring-onvif
