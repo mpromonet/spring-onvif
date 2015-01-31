@@ -1,3 +1,5 @@
+[![Build status](https://travis-ci.org/mpromonet/spring-onvif.svg)](https://travis-ci.org/mpromonet/spring-onvif)
+
 Spring-ONVIF
 ========
 The aim is to try to implement ONVIF services in a flexible way and to learn a bit more about what could do Apache Camel.  
@@ -25,7 +27,7 @@ Domain public.
 
 Links
 ------------
-- Packaged Application (http://repository-mpr.forge.cloudbees.com/snapshot/spring/onvif/1.0-SNAPSHOT/)
-- Running Application (http://spring-onvif.mpr.cloudbees.net)
+- Running Application (https://spring-onvif.herokuapp.com/)
+- Travis CI (https://travis-ci.org/mpromonet/spring-onvif)
 - Maven Site (http://mpromonet.github.com/spring-onvif)
-- Jenkins CI (https://mpr.ci.cloudbees.com/job/spring-onvif)
+- Packaged Application (http://repository-mpr.forge.cloudbees.com/snapshot/spring/onvif/1.0-SNAPSHOT/)

@@ -1,0 +1,9 @@
+language: java
+script: mvn install
+deploy:
+  provider: heroku
+  api_key:
+    secure: bJloLs6wbKIoCIfBol6vQo1HDn62tO1M/seRgZSWoWNstd77N8ivQc/ibq9twmrCNcuVAFJ9LrPOQ2QFXL7xiE8xpXS9qBuQ+6ZfGZ4KZ0uTMo96kU8dR1d7WB17X3zuhWASdlzXMuJ3isBusu+PFPYZ+iklb10kzEjFNGWOPVk=
+  app: spring-onvif
+  on:
+    repo: mpromonet/spring-onvif
