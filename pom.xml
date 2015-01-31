@@ -13,12 +13,12 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- dependency version -->
-		<camel-version>2.14.0</camel-version>
-		<spring-version>3.1.4.RELEASE</spring-version>
-		<slf4j-version>1.7.7</slf4j-version>
-		<groovy-version>2.2.1</groovy-version>
-		<cxf-version>3.0.2</cxf-version>
-		<h2-version>1.4.182</h2-version>
+		<camel-version>2.14.1</camel-version>
+		<spring-version>4.1.4.RELEASE</spring-version>
+		<slf4j-version>1.7.10</slf4j-version>
+		<groovy-version>2.4.0</groovy-version>
+		<cxf-version>3.0.3</cxf-version>
+		<h2-version>1.4.185</h2-version>
 		<!-- plugins version -->
 		<java-version>1.6</java-version>
 		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
@@ -26,10 +26,6 @@
 		<maven-pax-plugin.version>1.5</maven-pax-plugin.version>
 		<maven-changelog-plugin.version>2.2</maven-changelog-plugin.version>
 		<maven-project-info-reports-plugin.version>2.5.1</maven-project-info-reports-plugin.version>
-		
-		<!-- github -->
-		<github.global.server>github</github.global.server>
-		<github.version>0.6</github.version>
 	</properties>
 		
 	<developers>
