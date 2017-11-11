@@ -1,4 +1,5 @@
 [![Build status](https://travis-ci.org/mpromonet/spring-onvif.svg)](https://travis-ci.org/mpromonet/spring-onvif)
+[![Heroku](https://heroku-badge.herokuapp.com/?app=spring-onvif)](https://spring-onvif.herokuapp.com/)
 
 Spring-ONVIF
 ========
@@ -21,13 +22,3 @@ Build
 - `mvn package` build the web application.
 - `mvn` build and run the web application in embedded tomcat.
 
-Copyright
-------------
-Domain public.
-
-Links
-------------
-- Running Application (https://spring-onvif.herokuapp.com/)
-- Travis CI (https://travis-ci.org/mpromonet/spring-onvif)
-- Maven Site (http://mpromonet.github.com/spring-onvif)
-- Packaged Application (http://repository-mpr.forge.cloudbees.com/snapshot/spring/onvif/1.0-SNAPSHOT/)
